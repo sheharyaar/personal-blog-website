@@ -1,4 +1,5 @@
 ---
+import PostComments from "@components/PostComments.astro"
 import { type CollectionEntry, getCollection } from "astro:content"
 
 type Props = {
@@ -55,4 +56,6 @@ const next = items[(index + 1) % items.length]
       </svg>
     </a>
   </div>
+
+  <PostComments/>
 </div>
