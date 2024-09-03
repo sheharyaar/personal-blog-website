@@ -1,6 +1,6 @@
 ---
 title: "Linux Kernel Bug Fixing Experience"
-summary: "My experience with Linux Kernel Bug Fixing Program under Linux Foundation Mentorship"
+summary: "My experience with Linux Kernel Bug Fixing Program under Linux Foundation Mentorship."
 date: "May 30 2024"
 draft: false
 tags:
