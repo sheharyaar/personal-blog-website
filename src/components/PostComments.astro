@@ -1,6 +1,5 @@
-<section class="giscus mx-auto mt-10 w-full"></section>
-
-<script src="https://giscus.app/client.js"
+<section class="giscus mx-auto mt-10 w-full">
+        <script src="https://giscus.app/client.js"
         data-repo="sheharyaar/diwan-e-shehar"
         data-repo-id="R_kgDOMrGb6A"
         data-category="Blog Discussion"
@@ -13,6 +12,35 @@
         data-theme="dark"
         data-lang="en"
         data-loading="lazy"
-        crossorigin="anonymous"
-        async>
+        crossorigin="anonymous">
+        </script>
+</section>
+
+<script is:inline>
+        function updateGiscusTheme() {
+          const theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+          const iframe = document.querySelector('iframe.giscus-frame')
+          if (!iframe) return
+          iframe.contentWindow.postMessage({ giscus: { setConfig: { theme } } }, 'https://giscus.app')
+        }
+      
+        const observer = new MutationObserver(updateGiscusTheme)
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+
+
+        // Function to check if the iframe is loaded
+        function checkIframe() {
+            const iframe = document.querySelector('iframe.giscus-frame');
+            if (iframe) {
+                iframe.addEventListener('load', function() {
+                    setTimeout(updateGiscusTheme, 5000);
+                });
+            } else {
+                // Check again after a short delay if iframe is not yet available
+                setTimeout(checkIframe, 300);
+            }
+        }
+
+        // Start checking for the iframe
+        checkIframe();
 </script>
