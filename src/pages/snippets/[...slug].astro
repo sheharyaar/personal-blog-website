@@ -1,0 +1,35 @@
+---
+import { type CollectionEntry, getCollection } from "astro:content"
+import PageLayout from "@layouts/PageLayout.astro"
+import TopLayout from "@layouts/TopLayout.astro"
+import BottomLayout from "@layouts/BottomLayout.astro"
+import ArticleTopLayout from "@layouts/ArticleTopLayout.astro"
+import ArticleBottomLayout from "@layouts/ArticleBottomLayout.astro"
+
+// Create the static snippets pages
+export async function getStaticPaths() {
+	const snippets = await getCollection("snippets")
+	return snippets.map((snippet) => ({
+		params: { slug: snippet.slug },
+		props: snippet,
+	}))
+}
+
+// Get the requested project
+type Props = CollectionEntry<"snippets">
+const snippet = Astro.props
+const { title, summary } = snippet.data
+---
+
+<PageLayout title={title} description={summary}>
+  <TopLayout>
+    <div class="animate">
+      <ArticleTopLayout entry={snippet} />
+    </div>
+  </TopLayout>
+  <BottomLayout>
+    <div class="animate">
+      <ArticleBottomLayout entry={snippet} />
+    </div>
+  </BottomLayout>
+</PageLayout>

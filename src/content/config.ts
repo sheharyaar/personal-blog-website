@@ -34,12 +34,15 @@ const projects = defineCollection({
   }),
 })
 
-const legal = defineCollection({
+const snippets = defineCollection({
   type: "content",
   schema: z.object({
     title: z.string(),
+    summary: z.string(),
     date: z.coerce.date(),
+    tags: z.array(z.string()),
+    draft: z.boolean().optional(),
   }),
 })
 
-export const collections = { work, blog, projects, legal }
+export const collections = { work, blog, projects, snippets }

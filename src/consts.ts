@@ -25,6 +25,12 @@ export const PROJECTS: Page = {
   DESCRIPTION: "Recent projects I have worked on.",
 }
 
+// Snippets Page 
+export const SNIPPETS: Page = {
+  TITLE: "Snippets",
+  DESCRIPTION: "My code snippets.",
+}
+
 // Search Page
 export const SEARCH: Page = {
   TITLE: "Search",
@@ -48,6 +54,10 @@ export const LINKS: Links = [
   { 
     TEXT: "Projects", 
     HREF: "/projects", 
+  },
+  {
+    TEXT: "Snippets",
+    HREF: "/snippets",
   },
 ]
 

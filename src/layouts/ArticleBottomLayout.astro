@@ -3,7 +3,7 @@ import PostComments from "@components/PostComments.astro"
 import { type CollectionEntry, getCollection } from "astro:content"
 
 type Props = {
-  entry: CollectionEntry<"blog"> | CollectionEntry<"projects">
+  entry: CollectionEntry<"blog"> | CollectionEntry<"projects"> | CollectionEntry<"snippets">
 }
 
 // Get the requested entry

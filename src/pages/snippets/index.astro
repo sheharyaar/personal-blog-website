@@ -1,0 +1,28 @@
+---
+import { getCollection } from "astro:content"
+import PageLayout from "@layouts/PageLayout.astro"
+import TopLayout from "@layouts/TopLayout.astro"
+import BottomLayout from "@layouts/BottomLayout.astro"
+import Snippets from "@components/Snippets"
+import { SNIPPETS } from "@consts"
+
+const snippets = (await getCollection("snippets"))
+  .filter(snippet => !snippet.data.draft)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+
+const tags = [...new Set(snippets.flatMap(snippet => snippet.data.tags))]
+  .sort((a, b) => a.localeCompare(b))
+---
+
+<PageLayout title={SNIPPETS.TITLE} description={SNIPPETS.DESCRIPTION}>
+  <TopLayout>
+    <div class="animate page-heading">
+      {SNIPPETS.TITLE}
+    </div>
+  </TopLayout>
+  <BottomLayout>
+    <div class="animate">
+      <Snippets client:load tags={tags} data={snippets} />
+    </div>
+  </BottomLayout>
+</PageLayout>
