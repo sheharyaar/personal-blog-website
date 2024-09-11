@@ -1,7 +1,7 @@
 ---
-title: "Path of a Packet in the Linux Kernel"
-summary: "Overview on the path of a TCP packet in the Linux Kernel."
-date: "Sep 07 2024"
+title: "Path of a received packet in the Kernel - Overview"
+summary: "Overview on the path of a received packet in the Linux Kernel."
+date: "Sep 11 2024"
 draft: true
 tags:
 - Linux Kernel
@@ -12,7 +12,81 @@ import { Image } from 'astro:assets';
 import overview_dark from './overview-dark.png';
 import overview_light from './overview-light.png';
 
+> This blog requires the readers to understand the 7-layered OSI model,
+> 4-layered DoD (TCP/IP) model, and internet and transport protocols. This blog
+> will not discuss the NIC's internal working and transmitting/receiving of
+> packets; this will only deal with the kernel side.
+
+Anyone who has studied computer networking knows that network interfaces receive
+packets, which go through various layers. In theory, that's pretty easy to
+understand, but it leaves the person with many questions : 
+- How does the machine know it has received a packet?
+- What does "travelling" through the layers mean in the code?
+- How do firewalls perform operations on these packets? 
+- How do applications "receive" packets to their file descriptors?
+- What are sockets, and how are they implemented? 
+
+Bugged by these same doubts, I will explore the source code to answer
+these questions from a student's perspective, going to as much depth as needed
+and not going down the rabbit hole. Networking in the Linux kernel is much more
+than these blogs cover. This complex code has undergone many improvements and
+optimizations, bringing Linux to the forefront of cloud technologies. 
+
+The network stacks are logical layers that perform different operations and
+handle other responsibilities in receiving and transmitting packets. The Linux
+Kernel implements four layers[^1]: **Link Layer** (Ethernet), **Network Layer** (IP, ARP),
+**Transport Layer** (TCP, UDP, etc.), and **Session Layer** (sockets and files).
+
+[^1]: [Kernel Flow - Linux Foundation
+    Wiki](https://wiki.linuxfoundation.org/networking/kernel_flow)
+
+### Path of a received packet in the Linux Kernel
+
 <div>
-<Image class="dark:block hidden" src={overview_dark} alt="Path of TCP packet diagram"/>
-<Image class="dark:hidden block" src={overview_light} alt="Path of TCP packet diagram"/>
+<Image class="dark:block hidden" src={overview_dark} alt="Path of a received packet diagram"/>
+<Image class="dark:hidden block" src={overview_light} alt="Path of received packet diagram"/>
+<figcaption class="text-center">Fig 1 - Flow of a received packet in the Linux Kernel</figcaption>
 </div>
+
+Figure 1 summarises the flow of the packet in the receive path. To make it
+easier for me and the readers to understand, I have divided the flow into
+multiple sections, each with a dedicated blog post. The sections are :
+- Binary to packet (sk_buff)
+- Bridging and IP traversal
+- Transport Layer traversal
+- Sockets
+
+### Binary to packet
+
+1. The **NIC** (Network Interface Card) receives and copies the packet to a **ring
+  buffer** using Direct Memory Access (don't worry, I will discuss these in their
+  respective blogs).
+
+2. After copying the packet to the buffer, it informs the CPU about it (see
+  [interrupts](https://wiki.osdev.org/Interrupts)). The CPU acknowledges the
+  interrupt, runs the registered Hardware Interrupt Handler, and schedules
+  **NAPI** (which schedules the Bottom Half or SoftIRQ handler for `NET_RX_SOFTIRQ`).
+
+3. The SoftIRQ handler consumes the packet from the DMA'ed ring buffer (in the
+  first step) using the device's registered **NAPI poll handler** and allocates
+  a data structure called **sk_buff** to hold it, which is used everywhere in
+  the networking kernel subsystem. 
+
+4. It then runs **CRC** calls, processes **VLAN**  tags, passes packets to
+  **TAPs** and other **sniffers**, calls **XDP hooks** and invokes the entry function
+  of the next layer (example: `ip_rcv` for the IP layer) with the created `skb.`
+  We call this process "sending the packet up the stack."
+
+A detailed blog with code snippets on this section is available at: [To be updated](#)
+
+### Bridging and IP Filtering
+
+\<To be updated after detailed blog on the previous section\>
+
+### Transport Layer Traversal
+
+\<To be updated after detailed blog on the previous section\>
+
+### Sockets
+
+\<To be updated after detailed blog on the previous section\>
