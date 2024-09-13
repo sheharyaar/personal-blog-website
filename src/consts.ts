@@ -3,7 +3,7 @@ import type { Site, Page, Links, Socials } from "@types"
 // Global
 export const SITE: Site = {
   TITLE: "Sheharyaar",
-  DESCRIPTION: "Welcome to Diwan-e-Shehar, my personal space for blogs, documentations and projects.",
+  DESCRIPTION: "Welcome to my personal space for blogs, documentations and projects.",
   AUTHOR: "Mohammad Shehar Yaar Tausif",
 }
 

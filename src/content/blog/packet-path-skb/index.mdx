@@ -1,0 +1,34 @@
+---
+title: "Path of a received packet - Binary to skb"
+summary: "The path of the packet from binary data to sk_buff."
+date: "Sep 14 2024"
+draft: true
+tags:
+- Linux Kernel
+- Networking
+- NAPI
+---
+
+import { Image } from 'astro:assets';
+// import interrupts from './interrupts.png'
+
+{/* <div>
+<Image src={skbuff_alloc} alt="Socket buffer allocation"/>
+<figcaption class="text-center">Fig 4.2 - Socket buffer and header pointers</figcaption>
+</div> */}
+
+
+### References
+
+- [Uncovering the Path of a Network Packet --
+  Medium](https://cloudchirp.medium.com/how-does-an-application-receive-a-network-packet-27451965efb)
+- [Packet reception in linux kernel -
+  Blogspot](https://embeddedsystemforu.blogspot.com/2013/03/packet-reception-in-linux-kernel.html)
+- [LinuxCon 2015 Linux Kernel Networking
+  Walkthrough](https://www.slideshare.net/ThomasGraf5/linuxcon-2015-linux-kernel-networking-walkthrough)
+- [Linux Network Receive Stack --
+  RedHat](https://people.redhat.com/pladd/MHVLUG_2017-04_Network_Receive_Stack.pdf)
+- [Advanced Network Programming (ANP) - Animesh
+  Trivedi](https://animeshtrivedi.github.io/files/2020/anp/2020-anp-lecture3-linux-internals.pdf)
+- [User-Space Networking - Rutgers
+  University](https://people.cs.rutgers.edu/~sn624/552-F19/lectures/14-userspace-networking.pdf)
