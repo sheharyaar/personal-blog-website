@@ -72,7 +72,7 @@ multiple sections, each with a dedicated blog post. The sections are :
   a data structure called **sk_buff** to hold it, which is used everywhere in
   the networking kernel subsystem. 
 
-4. It then runs **CRC** calls, processes **VLAN**  tags, passes packets to
+4. It then runs **CRC** checks, processes **VLAN**  tags, passes packets to
   **TAPs** and other **sniffers**, calls **XDP hooks** and invokes the entry function
   of the next layer (example: `ip_rcv` for the IP layer) with the created `skb.`
   We call this process "sending the packet up the stack."
