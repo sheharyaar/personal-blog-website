@@ -54,7 +54,7 @@ threads**. The networking subsystem uses this approach. **ksoftirqd** are
 per-thread processes that are assigned the bottom half handlers. The bottom half
 handlers are **registered by the driver** or by the kernel subsystem using
 kernel API functions. For example PCI driver use `irq_request` or
-`pci_alloc_irq_vectors`for this purpose.
+`pci_alloc_irq_vectors` for this purpose.
 
 <div>
 <Image src={interrupts} alt="Interrupts top half and bottom half image"/>

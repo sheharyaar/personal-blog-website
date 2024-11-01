@@ -18,6 +18,11 @@
     font-style: normal;
     font-display: swap;
   }
+
+  @font-face {
+    font-family: "Iosevka";
+    src: url("/fonts/iosevka-nerd-regular.ttf");
+  }
 }
 
 html {
@@ -78,11 +83,13 @@ article {
 /* Light mode styling for code elements */
 code {
   @apply text-codeLight;
+  font-family: "Iosevka";
 }
 
 /* Dark mode styling for code elements */
 .dark code {
   @apply text-codeDark;
+  font-family: "Iosevka";
 }
 
 /** Light theme particles on home page */
