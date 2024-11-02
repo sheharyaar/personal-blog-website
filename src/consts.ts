@@ -60,6 +60,10 @@ export const LINKS: Links = [
     TEXT: "Snippets",
     HREF: "/snippets",
   },
+  {
+    TEXT: "Notes",
+    HREF: "/notes",
+  }
 ];
 
 // Socials

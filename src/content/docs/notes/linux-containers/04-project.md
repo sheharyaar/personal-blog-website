@@ -4,7 +4,7 @@ title: Implementing a low-level container runtime
 
 ## Prerequisites
 
-- To get started we need to be through the basics of [Linux Kernel Namespaces](../namespaces) and [Linux cgroups](../cgroups).
+- To get started we need to be through the basics of [Linux Kernel Namespaces](../linux-containers/01-namespaces) and [Linux cgroups](../linux-containers/02-cgroups).
 - Follow the blog series by Hechao Li : [Mini Container Series Part 0](https://hechao.li/posts/Mini-Container-Series-Part-0-Not-a-Real-Container/)
 - Reference Code : [container-runtime](https://github.com/sheharyaar/container-runtime)
 
@@ -12,7 +12,7 @@ title: Implementing a low-level container runtime
 
 ### Network setup
 
-**TODO**: This section will be done after familiarity with Kernel Networking, Netlink and Virtual Networks, checkout [Network Isolation (TODO later)](../network-isolation)  for more information.
+**TODO**: This section will be done after familiarity with Kernel Networking, Netlink and Virtual Networks, checkout [Network Isolation (TODO later)](../03-network-isolation)  for more information.
 
 ### Setting up the file-system
 

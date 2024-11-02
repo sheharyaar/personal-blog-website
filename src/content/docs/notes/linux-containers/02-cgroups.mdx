@@ -2,6 +2,10 @@
 title: Linux cgroups
 ---
 
+import { Aside } from '@astrojs/starlight/components';
+
+<Aside type="note"> This article is source-code heavy and can be overwhelming. Please take some time and explore the kernel source code along with this article to get the best results out of this.</Aside>
+
 ### What are cgroups ?
 
 - Kernel feature that allows processes to be organised into hierarchical groups whose usage of various resources can be limited or monitored.
@@ -21,7 +25,7 @@ title: Linux cgroups
 ### cgroup v2
 
 - Single unified hierarchy design in API and safer sub-tree delegation to containers.
-- cgroups are of two parts — **core** and **controllers**. **Core** is responsible for hierarchically organising the processes and **controller** is responsible for distributing the specific type of resource. Core files have `cgroup.` as the file prefix.
+- cgroups are of two parts — **core** and **controllers**. **Core** is responsible for hierarchically organising the processes and **controller** is responsible for distributing the specific type of resource. Core files have `cgroup` as the file prefix.
 - cgroups with no live processes or children (even if zombie processes still exist in that cgroup) can be removed by removing the directory using `rm`.
 
 ### Processes and controllers
@@ -37,6 +41,8 @@ title: Linux cgroups
 In this section, I shall discuss the cgroup **core** instead of the controllers. To understand the kernel data structures, you should be familiar with Linux Kernel style of initialisation of handlers and interface-like structs. For example, `kernfs_syscall_ops` in Snippet 3.2 under Phase 3 of Kernel Dive later in this tutorial.
 
 ### Important data structures
+
+<Aside type="tip" >Cgroup kernel data structures are quite confusing, make sure to checkout the [Flowchart](#flowchart) section and [Navigating the cgroup structures](#navigating-the-cgroup-structures) section, later in the article.</Aside>
 
 #### struct cgroup_subsys
 

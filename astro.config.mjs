@@ -32,6 +32,24 @@ export default defineConfig({
     sitemap(),
     solidJs(),
     tailwind({ applyBaseStyles: false }),
-    starlight({title: "CS Notes", expressiveCode: false, customCss: ['./src/styles/starlight.css',],}),
+    starlight({title: "Sheharyaar's Notes", expressiveCode: false, customCss: ['./src/styles/starlight.css',],
+      head: [
+        {
+          tag: 'script',
+          content: `window.addEventListener('load', () => document.querySelector('.site-title').href += 'notes/')`,
+        },
+      ],
+      sidebar: [{
+        label: 'Notes Homepage',
+        link: '/notes',
+      }, {
+        label: 'Linux Containers',
+        autogenerate: {directory: 'notes/linux-containers'},
+      }, {
+        label: 'Container FS',
+        autogenerate: {directory: 'notes/container-file-systems'},
+      },],
+      disable404Route: true,
+    }),
   ],
 });
