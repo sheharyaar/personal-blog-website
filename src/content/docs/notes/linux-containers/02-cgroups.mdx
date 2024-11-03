@@ -1,5 +1,9 @@
 ---
 title: Linux cgroups
+sidebar:
+    badge:
+        text: Incomplete
+        variant: caution
 ---
 
 import { Aside } from '@astrojs/starlight/components';
@@ -38,11 +42,12 @@ import { Aside } from '@astrojs/starlight/components';
 
 ## Kernel Dive
 
+<Aside type="caution" >If you do not want to go deep into the kernel implementation, please skip this section.
+<br/><br/>Cgroup kernel data structures are quite confusing, make sure to checkout the [Flowchart](#flowchart) section and [Navigating the cgroup structures](#navigating-the-cgroup-structures) section, later in the article.</Aside>
+
 In this section, I shall discuss the cgroup **core** instead of the controllers. To understand the kernel data structures, you should be familiar with Linux Kernel style of initialisation of handlers and interface-like structs. For example, `kernfs_syscall_ops` in Snippet 3.2 under Phase 3 of Kernel Dive later in this tutorial.
 
 ### Important data structures
-
-<Aside type="tip" >Cgroup kernel data structures are quite confusing, make sure to checkout the [Flowchart](#flowchart) section and [Navigating the cgroup structures](#navigating-the-cgroup-structures) section, later in the article.</Aside>
 
 #### struct cgroup_subsys
 
@@ -331,7 +336,7 @@ struct css_set {
 
 ### Flowchart
 
-**TODO**: Complete this. Flowchart from perspective of a task, cgroup, cgroup root, state, state set
+<Aside type="note"> This section is incomplete </Aside>
 
 ### Navigating the cgroup structures
 
@@ -339,7 +344,7 @@ By this section, you must already be confused by the large number of data struct
 
 1. How can a process access it’s cgroup
 
-**TODO**: Complete this
+<Aside type="note"> This section is incomplete </Aside>
 
 ## Phase 1 : Boot
 
