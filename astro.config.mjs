@@ -45,10 +45,6 @@ export default defineConfig({
       }, {
         label: 'Linux Containers',
         autogenerate: {directory: 'notes/linux-containers'},
-      }, {
-        label: 'Container FS',
-        badge: 'In progress',
-        autogenerate: {directory: 'notes/container-file-systems'},
       },],
       disable404Route: true,
     }),

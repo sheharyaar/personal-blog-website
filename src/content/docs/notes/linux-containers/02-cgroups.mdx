@@ -1,12 +1,10 @@
 ---
 title: Linux cgroups
-sidebar:
-    badge:
-        text: Incomplete
-        variant: caution
 ---
 
 import { Aside } from '@astrojs/starlight/components';
+import flowchart from './flowchart.png';
+import { Image } from 'astro:assets';
 
 <Aside type="note"> This article is source-code heavy and can be overwhelming. Please take some time and explore the kernel source code along with this article to get the best results out of this.</Aside>
 
@@ -336,7 +334,15 @@ struct css_set {
 
 ### Flowchart
 
-<Aside type="note"> This section is incomplete </Aside>
+<div>
+<Image src={flowchart} alt="Relation flowchart"/>
+<figcaption class="text-center">Fig 1.2 - Relation between different cgroup structures<br/>
+Copied from Terenceli blog (see References).</figcaption>
+</div>
+
+Terenceli has done a better job at explaining the structures and their relations. 
+Check them out at [his blog](https://terenceli.github.io/%E6%8A%80%E6%9C%AF/2020/01/05/cgroup-internlas). 
+Still the cgroup codebase is a clusterfuck.
 
 ### Navigating the cgroup structures
 

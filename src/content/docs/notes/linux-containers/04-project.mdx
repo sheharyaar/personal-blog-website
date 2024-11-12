@@ -3,6 +3,8 @@ title: Implementing a low-level container runtime
 ---
 
 import { Aside } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+import setup_container from './setup-container.png'; 
 
 ## Prerequisites
 
@@ -11,6 +13,12 @@ import { Aside } from '@astrojs/starlight/components';
 - Reference Code : [container-runtime](https://github.com/sheharyaar/container-runtime)
 
 ## Phases in starting a container
+
+<div>
+<Image src={setup_container} alt="Phases of a container startup"/>
+<figcaption class="text-center">Fig 1.1 - Phases of a container startup</figcaption>
+</div>
+
 ### User NS, Privileges and UID/GID mappings
 
 If we use clone using the flags `CLONE_NEWUSER`, it creates a new user namespace. the execed process spawns with UID 0 in then 

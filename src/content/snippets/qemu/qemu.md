@@ -6,6 +6,64 @@ draft: false
 tags:
 - QEMU
 ---
+## Setup QEMU for Kernel GDB Debugging (no display)
+
+You need these to run a compiled kernel and debug it using GDB:
+1. The kernel bzImage
+2. ramdisk image
+
+### Tips: 
+
+- To debug it with gdb, run QEMU with option `-s` (shorthand for `gdb -tcp::1234`) and `-S` for starting
+the CPU in the stopped stated.
+- Load the GDB scripts by adding the `add-auto-load-safe-path` script to gdbinit. The position of gdbinit
+can be `~/.gdbinit` or `~/.config/gdb/gdbinit`.
+```
+echo "add-auto-load-safe-path /path/to/linux/scripts/gdb/vmlinux-gdb.py" >> ~/.gdbinit
+```
+
+### Steps
+
+1. Run the default config : `make defconfig`
+2. Add or set these symbols in `.config` file of the kernel :
+```
+CONFIG_GDB_SCRIPTS=y
+CONFIG_DEBUG_INFO=y
+CONFIG_DEBUG_KERNEL=y
+CONFIG_KALLSYMS=y
+CONFIG_RANDOMIZE_BASE=n
+```
+3. You can also run these : 
+```
+$ ./scripts/config -e DEBUG_INFO -e DEBUG_KERNEL -e DEBUG_INFO_DWARF4
+$ ./scripts/config -e DEBUG_SECTION_MISMATCH -e DEBUG_OBJECTS -e DEBUG_OBJECTS_WORK -e DEBUG_VM
+$ ./scripts/config -e GDB_SCRIPTS -e HEADERS_INSTALL
+```
+4. Run `make -j$(nproc)` to build the kernel
+5. Build gdb scripts: `make scripts_gdb`
+6. Run modules_install: `make modules_install`
+7. Build the ramdisk image
+```
+sudo dracut --kernel-image arch/x86/boot/bzImage --confdir /etc/dracut.conf.d/ -v ramdisk.img <version>
+```
+8. Run QEMU : 
+```
+qemu-system-x86_64 \
+	-kernel $kernel_path/vmlinux \
+	-initrd $ramdisk_path/ramdisk.img \
+	-append "console=ttyS0 nokaslr" \
+	-nographic -enable-kvm -cpu host -m 512 \
+	-s -S
+```
+9. Run `gdb $KERNEL_SRC/vmlinux` in another terminal
+10. Enter `target remote localhost:1234` to get started with remote debugging the kernel
+
+> Note: Try to use `hbreak` instead of `b` in gdb to attach breakpoints early in the kernel
+
+If you are getting `memory cannot be accessed` during adding a breakpoint, then you must have missed disabling
+`KASLR` or `Kernel Address Space Layour Randomisation`. See `CONFIG_RANDOMIZE_BASE` config flag.
+
+## Setup QEMU for running QEMU with a custom kernel and display
 
 This will help you setup a shared folder between a QEMU guest and the host. This also dosables `KASLR` or `Kernel Address Space Layout Randomisation` (which is a security feature, but can be disabled for easier debugging - [Wikipedia](https://en.wikipedia.org/wiki/Address_space_layout_randomization)).
 
