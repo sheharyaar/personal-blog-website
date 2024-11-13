@@ -65,7 +65,7 @@ If you are getting `memory cannot be accessed` during adding a breakpoint, then 
 
 ## Setup QEMU for running QEMU with a custom kernel and display
 
-This will help you setup a shared folder between a QEMU guest and the host. This also dosables `KASLR` or `Kernel Address Space Layout Randomisation` (which is a security feature, but can be disabled for easier debugging - [Wikipedia](https://en.wikipedia.org/wiki/Address_space_layout_randomization)).
+This will help you setup a shared folder between a QEMU guest and the host. This also disables `KASLR` or `Kernel Address Space Layout Randomisation` (which is a security feature, but can be disabled for easier debugging - [Wikipedia](https://en.wikipedia.org/wiki/Address_space_layout_randomization)).
 
 Make sure to adjust the parameters to your RAM (`-m`), `file` with your_os.qcow2 location and `shared_folder` parameters with your own shared folder values.
 

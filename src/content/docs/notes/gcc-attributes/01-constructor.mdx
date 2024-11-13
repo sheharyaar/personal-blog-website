@@ -1,0 +1,59 @@
+---
+title: Common GCC attributes in C
+---
+
+## Constructor and Destructor
+
+`constructor` and `destructor` attributes are really interesting. The functions registered with constructor
+attribute is run `before main() is executed` and functions registered with destructor attribute is run
+`after main() function exits`. An interesting use case for these is to pre-load libraries or hook into
+libraries using `LD_PRELOAD`.
+
+To see the preload technique, checkout :
+[sheharyaar/byte-sized-programs](https://github.com/sheharyaar/byte-sized-programs/tree/main/gcc-attributes).
+The README files has steps to build and run the example. This can be used with both standalone programs and
+shared libraries.
+
+Here is a simple usage snippet:
+
+```c
+#include <stdio.h>
+__attribute__((constructor)) int before_main() {
+	fprintf(stdout, "executing func %s\n", __FUNCTION__);
+	return 0;
+}
+
+__attribute__((destructor)) int after_main() {
+	fprintf(stdout, "executing func %s\n", __FUNCTION__);
+	return 0;
+}
+
+int main(int argc, char *argv[]) {
+	fprintf(stdout, "executing func %s\n", __FUNCTION__);
+	return 0;
+}
+```
+
+This will output :
+
+```
+executing func before_main
+executing func main
+executing func after_main
+```
+
+References
+
+-   https://www.geeksforgeeks.org/__attribute__constructor-__attribute__destructor-syntaxes-c/
+-   https://www.apriorit.com/dev-blog/537-using-constructor-attribute-with-ld-preload
+-   https://tbrindus.ca/correct-ld-preload-hooking-libc/
+
+## aligned(X)
+
+## cleanup
+
+## used and unused
+
+## noreturn
+
+## deprecated
