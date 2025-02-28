@@ -45,9 +45,6 @@ export default defineConfig({
       }, {
         label: 'Linux Containers',
         autogenerate: {directory: 'notes/linux-containers'},
-      },{
-        label: 'ELF Shared Libraries and GCC',
-        autogenerate: {directory: 'notes/gcc-attributes'},
       },],
       disable404Route: true,
     }),
