@@ -1,0 +1,97 @@
+---
+title: Stack
+---
+
+import { Aside } from "@astrojs/starlight/components";
+import { Image } from "astro:assets";
+import jump_signed from "./jump_signed.png";
+import jump_unsigned from "./jump_unsigned.png";
+import stack from "./stack.png";
+
+<Aside type="note">
+    For detailed information on the stack, variadic args and other aspects of function calling, unwinding,
+    etc. refer to : [Notes on System V ABI (yet to be uploaded)](#).
+
+{/* TODO: Add link to System V ABI notes once uploaded. */}
+
+</Aside>
+
+## Stack and Function Calls
+
+-   The stack grows **downward** in memory, so the top of the stack is **lower** in memory.
+-   `push` and `pop` perform stack operations.
+-   To reserve a space, subtract size from the **stack pointer** `rsp` . To give it back, add the space back.
+    The space should be a multiple of 16 **bytes** (as stated under
+    [System V ABI Calling Convention for AMD64](https://gitlab.com/x86-psABIs/x86-64-ABI)).
+-   You can use, `ulimit -s` to check the stack size.
+
+| System Call (Linux Kernel) | Function Call (Userspace) |
+| -------------------------- | ------------------------- |
+| rdi                        | rdi                       |
+| rsi                        | rsi                       |
+| rdx                        | rdx                       |
+| _r10_                      | _rcx_                     |
+| r8                         | r8                        |
+| r9                         | r9                        |
+
+## Entering and Leaving Functions
+
+To enter a function you need to:
+
+1. push the base pointer to the stack (this will decrease the rsp)
+2. copy the stack pointer (**rsp**) to **rbp** (points to the base pointer)
+3. reserve the memory w.r.t to the rsp
+
+<div>
+    <Image src={stack} alt="Stack Frame" />
+    <figcaption>Fig 1.4 - Stack Frame</figcaption>
+</div>
+
+-   To make clearing local variables easy, **rbp** base pointer is used. All the local variables are then
+    placed in relative to the base pointer.
+-   To leave the function, you need to reverse: restore the stack pointer to the base pointer and pop the
+    saved base pointer to **rbp**
+
+```asm
+; enter
+popq %rbp          ; push the base pointer to the stack
+movq %rsp, %rbp    ; save the stack pointer to rbp
+subq $NUM_BYTES, %rsp  ; allocate stack region
+
+; The above code is equivalent to
+; enter $NUM_BYTES, $0
+
+; leave
+movq %rbp, %rsp    ; restore the stack pointer
+popq %rbp          ; restore the base pointer
+```
+
+-   To prevent writing this much, we have `enter` and `leave` function that perform this. However, **enter**
+    is **slower** than these instructions and **leave** is faster. So compiler optimisations use the assembly
+    instructions to enter and `leave` to exit. (`enter $NUM_BYTES, $0`). The second argument is usually kept
+    0, unless we want to implement closures.
+
+## Passing arguments to the stack
+
+-   To look into the number of arguments and their assignment to the registers, we need to refer to the System
+    V ABI Calling Convention as it is the one used by Linux. There are some exceptions like Golang uses its
+    own [Internal ABI](https://go.googlesource.com/go/+/refs/heads/dev.regabi/src/cmd/compile/internal-abi.md)
+    to be able to keep the same ABI across platforms.
+-   For information on how the different types of parameters (float, int, pointers, structs, unions, arrays)
+    are passed to a function, what happens if the registers are exhausted and how are vairadic (variable
+    argument) functions are handled, refer to [Notes on System V ABI (yet to be uploaded)](#).
+
+{/* TODO: Add link to System V ABI notes once uploaded. */}
+
+## Tail-Call Elimination
+
+-   A recursive program can result into exhausting the stack space due to a large number of recursions.
+-   If the _last_ thing the function does is return the value of another function and doesn’t work with the
+    return value, then in assembly, instead of `call` the compiler can optimise to do away with the stack
+    using `leave` and instead of `call` , it can just issue a `jmp` function.
+-   This will not return the control to the current function, but to the preceding function.
+
+<Aside type="note">
+    This only works if the very last thing a function does is it makes a function call and returns the value
+    of the result as it is without changing it.
+</Aside>

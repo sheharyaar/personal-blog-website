@@ -4,6 +4,8 @@ import sitemap from "@astrojs/sitemap";
 import tailwind from "@astrojs/tailwind";
 import solidJs from "@astrojs/solid-js";
 import rehypePrettyCode from "rehype-pretty-code";
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 
 import starlight from "@astrojs/starlight";
 
@@ -17,11 +19,13 @@ export default defineConfig({
     shikiConfig: {
       theme: "ayu-dark",
     },
-    rehypePlugins: [rehypePrettyCode],
+    rehypePlugins: [rehypePrettyCode, rehypeKatex],
+    remarkPlugins: [remarkMath],
   },
   integrations: [
     mdx({
-      rehypePlugins: [rehypePrettyCode],
+      remarkPlugins: [remarkMath],
+      rehypePlugins: [rehypePrettyCode, rehypeKatex],
       syntaxHighlight: "shiki",
       gfm: true,
       smartypants: true,
@@ -45,6 +49,12 @@ export default defineConfig({
       }, {
         label: 'Linux Containers',
         autogenerate: {directory: 'notes/linux-containers'},
+      }, {
+        label: 'Assembly Language',
+        autogenerate: {directory: 'notes/assembly'},
+      }, {
+        label: 'System V ABI, ELF and Shared Libraries',
+        autogenerate: {directory: 'notes/sysv-elf-dso'},
       },],
       disable404Route: true,
     }),

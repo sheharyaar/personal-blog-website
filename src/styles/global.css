@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@import "https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css";
+
+.katex {
+  color: inherit;
+}
+
 @layer base {
   @font-face {
     font-family: "Atkinson";

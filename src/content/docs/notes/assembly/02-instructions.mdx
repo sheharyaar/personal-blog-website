@@ -1,0 +1,102 @@
+---
+title: Instructions
+---
+
+import { Aside } from "@astrojs/starlight/components";
+import { Image } from "astro:assets";
+import jump_signed from "./jump_signed.png";
+import jump_unsigned from "./jump_unsigned.png";
+
+<Aside type="note">
+    For the sake of not repeating good tutorials, I have skipped info on **arithmetic**, **jump**, **condition
+    and other flags** instructions. One thing to note is that `loopq` variable, uses the register `rcx` to
+    check for the result to be _0_ and stop the loop.
+</Aside>
+
+## Bit Manipulation Instructions
+
+-   `and`, `or`, `not`, `xor` ,`nor` are bit-wise operations. `testb` performs **AND** operation, discards the
+    result and keeps the flags set.
+-   `xor` the register with itself to make it 0. **This does not set the flag**.
+-   `lzcntq` counts the number of leading zeroes
+-   `bsfq` (bit scan forward) scans for the first set bit (from **bit 0**) and stores the index in the target
+    register. If no set bits, the result is undefined and **zero flag** is set.
+-   `bsrq` (bit scan reverse) does the same but from **bit 63**.
+-   Bits are counted from the least significant to the most significant.
+-   `ror` (rotate right) and `rol` (rotate left) registers rotate the register left and right respectively,
+    specified by the number of bits.
+-   `xchg` exchanges the values of its operands like a `mov` instruction.
+-   `bswap` reverses the order of bytes in the destination. There **isn’t** a 16-bit version, since it can be
+    easily done using `xchg`: `xchg %ax %al`
+-   `shr` shifts a value right by specified number of bits and `shl` shifts the value left.
+
+## Jump Instructions
+
+-   Used to change the flow of control in a program like loops, conditionals, function calls, etc.
+-   Checkout signed and unsigned jumps under : [Signed/Unsigned](#signedunsigned)
+-   **Short jump** is a jump within 127 bytes of the current instruction.
+-   **Near jump** is a jump somewhere within the current address space, relative to the **instruction
+    pointer** using 32 bits. (This is the one that we normally use, where the assembler calculates the
+    address). Due to 32 bits, it is constrained to be within **2 GB**.
+-   **Far jump** is used to jump across segments, but since linux uses the flat memory model, it is no longer
+    used.
+
+These are used by the compiler in different coding models like **small code model**, **medium code model**,
+etc. For more information on the code model refer to : [Notes on System V ABI (yet to be uploaded)](#)
+
+{/* TODO: Add link to System V ABI notes once uploaded. */}
+
+## Signed/Unsigned
+
+-   `negb/negw/negl/negq` can be used to save the negative of the contents stored in the register.
+-   Flags to consider:
+    -   Zero Flag (**ZF**): Result of the last arithmetic op was **zero**.
+    -   Overflow Flag (**OF**): Used to denote **signed** overflow on any arithmetic op.
+    -   Carry Flag (**CF**): Used to denote **unsigned** overflow on any arithmetic op.
+    -   Sign Flag (**SF**): Used to denote if the result of an arithmetic op is **signed**. Used to extend the
+        number of bits usable (as opposed to reserving a signed bit).
+
+### Signed Jumps
+
+<div>
+    <Image src={jump_signed} alt="Signed Jumps" />
+    <figcaption class="text-center">Fig 3.1 - Signed Jumps</figcaption>
+</div>
+
+### Unsigned Jumps
+
+<div>
+    <Image src={jump_unsigned} alt="Unsigned Jumps" />
+    <figcaption class="text-center">Fig 3.2 - Unsigned Jumps</figcaption>
+</div>
+
+## Arithmetic Instructions
+
+-   `addcq` adds two numbers and also considers carry flag, can be used to handle larger numbers (greater than
+    64-bits).
+-   For multiplication, the overflow can be more than just a bit, so the process uses two registers, the LSB
+    is stored in `rax` and the remaining is stored in `rdx` (that’s why it’s called data register). Together
+    they are `%rdx:%rax` in documentations.
+-   For division, the dividend (the number _being_ divided) is stored in `%rdx:%rax` and the divisor is the
+    operand. The quotient is stored in `%rax` and remainder in `%rdx` . **Note:** `rdx` should be zero before
+    carrying out division, otherwise, it will be part of dividend.
+
+## System Calls
+
+The kernel takes care not to clobber the registers that the user program uses, except for 3:
+
+-   `%rcx` - stores where the next instruction will be when the kernel returns
+-   `%r11` - the current values of `%eflags` are stored in `%r11`
+-   `%rax` - the return value of the system call (if any) Hence, these 3 registers must be saved somewhere if
+    you store anything important in them, before making a system call. These are also called **caller-saved /
+    call-clobbered** registers. Apart from these, `rdx` , `rd8`, `rd9` and `rd10` are also caller-saved
+    registers.
+
+The registers that include the parameters to the syscalls are:
+
+-   `rax` : contains the syscall number
+-   `rdi` , `rsi`, `rdx`, `r10`, `r8` and `r9` in the same order (1st arg, …)
+
+<Aside type="note">
+    This order is different from the userspace function calls as defined by the System V ABI.
+</Aside>
