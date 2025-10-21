@@ -1,0 +1,136 @@
+---
+title: Function Calls and The Stack
+sidebar:
+    badge:
+        text: Incomplete
+        variant: note
+---
+
+import { Image } from "astro:assets";
+import init_stack from "./init_stack.png"
+import stack_frame from "./stack_frame.png"
+
+## Calling Convention
+
+The calling convention describes how parameters are passed to a function using registers and the stack. [LLVM](https://llvm.org/docs/LangRef.html#calling-conventions) has many calling conventions available that can be used by programmers, language developers, etc. to decide on the convention that suits best to their needs. These different conventions provide different optimisations (see [Optimisations](#optimisations)).
+
+To be compliant with System V ABI, all **global** functions *must* follow the convention. **Local** functions (not reachable from other compilation units such as when using `static` in C) can follow their own conventions. These optimisations are usually done by the compiler itself and the programmer doesn’t have to do much.
+
+A function call usually involves the following steps:
+
+1. Calculating the values of arguments.
+2. Allocate a stack frame.
+3. Push the arguments to the registers and the stack. For each argument, we must determine the following:
+    1. If the argument should be pushed to stack or the registers. For this we have to classify the parameters and then merge the classes if an argument consists of multiple sub-classes.
+    2. If to be put to registers, the number of General Purpose Registers (GPRs) and SSE Registers required to hold the argument.
+    3. The order of the registers that have to be used.
+
+## Classification of Parameters
+
+The specification defines the following classes:
+
+| | |
+| --- | --- |
+| INTEGER | Integral types that fit into one of general purpose registers (GPRs). |
+| SSE | Types that fit into vector registers. |
+| SSEUP | Types that fir in vector regs, but can be passed and returned in upper bytes of it. |
+| NO_CLASS | Used as initialiser in algorithms and for padding and empty structures and unions |
+| MEMORY | Types that will be passed/returned in memory via the stack. |
+
+Other types such as `x87`, `x87UP`, `COMPLEX_x87` are also there.
+
+### Classification Algorithm
+
+1. The size of each argument is rounded upto **eightbytes**. This will help keep the stack **aligned to 8 bytes** (See Stack section for more information).
+2. The following table denotes the classification based on the type of the argument:
+
+| | |
+| --- | --- |
+| _Bool, char, short, int, long, long long, pointer | INTEGER |
+| _Float16, float, double, _Decimal32, _Decimal64, __m64 | SSE |
+| __float128, etc. | Least significant - SSE, Others - SSEUP |
+| __int28 | Treated as struct of two consecutive Integers. Exception that it must be stored on 16-byte boundary. |
+| struct, arrays, unions | - Size of object is > 8 eightbytes (8 * 64-bits) or has unaligned fields, then MEMORY
+
+If the size if more than 1 eightbyte (64-bits), then it is broken down into subclasses of eightbytes as `NO_CLASS`. Then recursively classified and then the classes are merged by rules below.
+
+### Merging Subclasses
+
+The rules for merging subclasses are:
+
+1. If both classes are equal, the result is the same class.
+2. If one of the class is `NO_CLASS`, the result is the other class.
+3. If one of the class is `MEMORY`, the result is `MEMORY`.
+4. If one is `INTEGER`, the result is `INTEGER`.
+
+### Registers Used and Order of Parameters
+
+The following rules define where to push the argument:
+
+1. `MEMORY` → stack (with stack alignment rules, the alignment can be more than the alignment of the type)
+2. `INTEGER` → next available register (from left-to-right): $\%rdi, \%rsi, \%rdx, \%rcx, \%r8, \%r9$.
+3. `SSE` → next available register between $\%xmm0-\%xmm7$.
+4. `X87, X87UP or COMPLEX_X87` → Memory
+
+> `%al` is used to indicate the number of vector arguments passed to a function requiring a variable number of arguments. `%r10` is used for passing a function’s static chain pointer.
+> 
+
+Things to keep in mind:
+
+- If there are more than 6 arguments (of type INTEGER) then the extra are pushed to the stack.
+- The **arguments** are pushed right to left, so that the first argument address can be calculated *statically* using the stack pointer arithmetic. This is useful especially in case of variadic arguments or functions that are called with ellipses `(...)`.
+    - For variadic arguments the `al` part of the `rax` register contains the upper bound on the number of arguments.
+
+> Note: Golang does not follow the platform ABI, instead it has it’s own internal ABI and a stable ABI called ABI0. Initially, every call was stack based and arguments and results were on stack only. But then register based calling was added.
+
+Reference: [https://go.googlesource.com/proposal/+/master/design/40724-register-calling.md](https://go.googlesource.com/proposal/+/master/design/40724-register-calling.md)
+> 
+
+## Stack
+
+- Memory region that holds local variables and arguments. It grows **downwards** from high addresses.
+
+<div>
+    <Image src={stack_frame} alt="Stack Frame" width={600}/>
+    <figcaption class="text-center">Fig 2.1 - Stack Frame</figcaption>
+</div>
+
+- Stack is always aligned by *at least* 16 bytes or 128 bits. If the stack variable are less than 16 bytes, then too stack is of 16 bytes. This *must* be ensured before making the `call` instruction.
+- The 128-byte area beyond the location pointed to by `%rsp` is considered to be reserved and should not be modified by signal or interrupt handlers. This area is called the `red zone`. This can be used by **leaf functions** for their stack frame instead of changing the stack pointer. This saves the epilogue and prologue instructions.
+
+### Stack Unwinding
+
+{/* TODO */}
+
+## Process Initialisation
+
+When the `_start` is called, this is the state of the stack:
+
+<div>
+    <Image src={init_stack} alt="Initialisation Stack" />
+    <figcaption class="text-center">Fig 2.2 - Stack on _start of the program</figcaption>
+</div>
+
+## Optimisations
+
+### Tail Call and Sibling Call Optimisations
+
+{/* TODO */}
+
+### Partial and Complete Function Inlining
+
+{/* TODO */}
+
+### Omit Frame Pointer
+
+{/* TODO */}
+
+### Link Time Optimisation
+
+{/* TODO */}
+
+## References
+
+- [GCC Implementation](https://github.com/gcc-mirror/gcc/blob/releases/gcc-14.2.0/gcc/config/i386/i386.cc#L2090)
+- [libffi implementation](https://github.com/libffi/libffi/blob/v3.5.2/src/x86/ffi64.c#L113)
+- https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
