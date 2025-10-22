@@ -43,6 +43,10 @@ export default defineConfig({
           tag: 'script',
           content: `window.addEventListener('load', () => document.querySelector('.site-title').href += 'notes/')`,
         },
+        {
+          tag: 'meta',
+          attrs: {property: 'og:image', content: 'https://sheharyaar.in/open-graph.jpeg'},
+        }
       ],
       sidebar: [{
         label: 'Notes Homepage',
