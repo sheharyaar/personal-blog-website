@@ -37,7 +37,7 @@ export default defineConfig({
     solidJs(),
     tailwind({ applyBaseStyles: false }),
     starlight({title: "Sheharyaar's Notes", expressiveCode: false, customCss: ['./src/styles/starlight.css',],
-      favicon: '/brand-light.svg',
+      favicon: '/brand.png',
       head: [
         {
           tag: 'script',
