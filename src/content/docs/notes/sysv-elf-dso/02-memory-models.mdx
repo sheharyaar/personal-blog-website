@@ -1,7 +1,229 @@
 ---
 title: x86-64 Code Models
-sidebar:
-    badge:
-        text: TODO
-        variant: caution
 ---
+
+import { Aside } from "@astrojs/starlight/components";
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+AMD64 **does not allow** an instruction to encode arbitrary 64-bit constants as immediate operand. Most instructions accept 32-bit immediates that are `sign extended` to 64-bit.
+
+<Aside type="note">
+An immediate is a constant value directly included as part of an instruction. Eg - `mov eax, 123`. Here `123` is an immediate value.
+</Aside> 
+- 32-bit operations with register destinations implicitly perform zero extension.
+
+- Branch instructions accept 32-bit immediate operands that are sign extended.
+
+This can be due to the following reasons (I could not find the exact reason documented) : 
+
+1. The immediate operands of instructions has not been extended to 64 bits to keep instruction size smaller, instead they remain 32-bit sign extended: [Source](https://www.ucw.cz/~hubicka/papers/amd64/node1.html)
+2. When using 64-bit immediates, then there would be no space for displacement, hence instructions like `jmp` would not work (This is what I could get from chatgpt, not sure tho. I have to check this claim!).
+
+So based on the requirements and to reduce the size / improve the performance of the program, several code models are present.
+
+## Code Models
+
+Code models usually tell the compiler how far the `code` and `data` might be from each other. These define constraints for symbolic values that allow the compiler to generate better code.
+
+- These models **differ in**: `addressing`, `code size`, `data size` and `address range`. To use a particular code model, you can compile your program in GCC using `-mcmodel=` flag ([Source](https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html#index-mcmodel_003d-7)).
+- In terms of instructions, addressing methods and steps for `mov` and `call` will change.
+- The System V ABI describes the following code models: Small, Medium, Large, Kernel, Small PIC, Medium PIC, Large PIC.
+
+<Aside type="note">
+The difference in these layouts is mostly due to the fact that AMD64 uses 32-bit immediates (which can be sign/zero extended) and not 64-bit. (As discussed earlier)
+</Aside>
+
+<Aside type="caution">
+This section talks about different section, Global Offset Table, Procedure Link Table, etc. For more information on these data sections, tables and how they are placed in memory, refer to ELF Specification and Dynamic Linking internals. Or, you can refer to my notes on [ELF](./03-elf.mdx) and [DSOs](./04-dso.mdx).
+</Aside>
+
+| **Model** | **Address Range / Layout** | **Addressing** |
+| --- | --- | --- |
+| **Small (Default)** | Code and data in **lower 2 GB** of address space | **RIP-relative** addressing for code and data (within ±2 GB). Pointers are still 64-bit |
+| **Kernel** | Code and data in **upper (negative) 2 GB** of address space | **RIP-relative** (same limits as small model) |
+| **Medium** | Code in **lower 2 GB**, small data in lower 2 GB. <br /> Large data > 2 GB (or larger than  `-mlarge-data-threshold`) in large data sections like `.ldata`, `.lrodata`, `.lbss` . | **Mixed:** RIP-relative for code/small data, `movabs` (absolute) for large data |
+| **Large** | Code and data **anywhere** in address space | **Absolute addressing** using `movabs` |
+| **Small PIC** | Code and data in **lower 2 GB**, accessed via GOT if needed | **RIP-relative** for nearby symbols; GOT-based indirect addressing for globals |
+| **Medium PIC** | Code in **lower 2 GB**, data can be anywhere | **Code:** RIP-relative**Data:** via GOT using base in `%r15` |
+| **Large PIC** | Code and data **anywhere** | **All addressing via GOT/PLT** (absolute built from `%rip` + offset) |
+
+## Addressing in Action
+
+Let’s compile the following program on [Godbolt](https://godbolt.org/) with the compiler version `x86-64 gcc 15.2` and argument: as given below with the programs. We will focus only a small part of the program
+
+Program (taken from the System V ABI Manual) :
+
+```jsx
+extern int src[65536];
+extern int dst[65536];
+extern int *ptr;
+
+static int lsrc[65536];
+static int ldst[65536];
+static int *lptr;
+
+int main() {
+    dst[0] = src[0];
+    ptr = dst;
+    *ptr = src[100];
+    ldst[0] = lsrc[0];
+    lptr = ldst;
+    *lptr = lsrc[0];
+}
+```
+
+### Small, Medium and Large Model
+
+<Tabs>
+  <TabItem label="Small">
+  - Argument: `-mcmodel=small -mlarge-data-threshold=65535`
+```asm
+main:
+    ...
+    ; ptr = dst
+    movq    $dst, ptr(%rip)
+
+    ; *ptr = src[100]
+    movq    ptr(%rip), %rax
+    movl    src+400(%rip), %edx
+    movl    %edx, (%rax)
+    ...
+    
+```
+  </TabItem>
+  <TabItem label="Medium">
+  - Argument: `-mcmodel=medium -mlarge-data-threshold=65535`
+
+```asm
+main:
+    ...
+    ; ptr = dst
+    movabsq $dst, %rax
+    movq    %rax, ptr(%rip)
+         
+    ; *ptr = src[100]
+    movq    ptr(%rip), %rax
+    movabsq $src, %rdx
+    movl    400(%rdx), %edx
+    movl    %edx, (%rax)
+    ...
+```
+  </TabItem>
+  <TabItem label="Large">
+  - Argument: `-mcmodel=large -mlarge-data-threshold=65535`
+
+```asm
+main:
+    ...
+    ; ptr = dst
+    movabsq $ptr, %rax
+    movabsq $dst, %rcx
+    movq    %rcx, (%rax)
+
+    ; *ptr = src[100]
+    movabsq $ptr, %rax
+    movq    (%rax), %rax
+    movabsq $src, %rdx
+    movl    400(%rdx), %edx
+    movl    %edx, (%rax
+    ...
+```
+  </TabItem>
+</Tabs>
+
+### Small, Medium and Large PIC Model
+
+<Tabs>
+  <TabItem label="Small">
+  - Argument: `-mcmodel=small -fPIC -mlarge-data-threshold=65535`
+```asm
+main:
+    ...
+    ; ptr = dst
+    movq    ptr@GOTPCREL(%rip), %rax
+    movq    dst@GOTPCREL(%rip), %rdx
+    movq    %rdx, (%rax)
+
+    ; *ptr = src[100] 
+    movq    ptr@GOTPCREL(%rip), %rax
+    movq    (%rax), %rax
+    movq    src@GOTPCREL(%rip), %rdx
+    movl    400(%rdx), %edx
+    movl    %edx, (%rax)
+    ...
+
+    ; ldst[0] = lsrc[0];
+    movl    lsrc(%rip), %eax
+    movl    %eax, ldst(%rip)
+    ...
+```
+  </TabItem>
+  <TabItem label="Medium">
+  - Argument: `-mcmodel=medium -fPIC -mlarge-data-threshold=65535`
+
+```asm
+main:
+    ...
+    ; ptr = dst
+    movq    ptr@GOTPCREL(%rip), %rdx
+    movq    dst@GOTPCREL(%rip), %rcx
+    movq    %rcx, (%rdx)
+
+    ; *ptr = src[100] 
+    movq    ptr@GOTPCREL(%rip), %rdx
+    movq    (%rdx), %rdx
+    movq    src@GOTPCREL(%rip), %rcx
+    movl    400(%rcx), %ecx
+    movl    %ecx, (%rdx)
+    ...
+
+    ; ldst[0] = lsrc[0]
+    movabsq $lsrc@GOTOFF, %rdx
+    movl    (%rax,%rdx), %edx
+    movabsq $ldst@GOTOFF, %rcx
+    movl    %edx, (%rax,%rcx)
+    ...
+```
+  </TabItem>
+  <TabItem label="Large">
+  - Argument: `-mcmodel=large -fPIC -mlarge-data-threshold=65535`
+```asm
+main:
+    ...
+    ; ptr = dst
+    movabsq $ptr@GOT, %rdx
+    movq    (%rax,%rdx), %rdx
+    movabsq $dst@GOT, %rcx
+    movq    (%rax,%rcx), %rcx
+    movq    %rcx, (%rdx)
+
+    ; *ptr = src[100] 
+    movabsq $ptr@GOT, %rdx
+    movq    (%rax,%rdx), %rdx
+    movq    (%rdx), %rdx
+    movabsq $src@GOT, %rcx
+    movq    (%rax,%rcx), %rcx
+    movl    400(%rcx), %ecx
+    movl    %ecx, (%rdx)
+    ...
+
+    ; ldst[0] = lsrc[0]
+    movabsq $ptr@GOT, %rdx
+    movq    (%rax,%rdx), %rdx
+    movabsq $dst@GOT, %rcx
+    movq    (%rax,%rcx), %rcx
+    movq    %rcx, (%rdx)
+    ...
+```
+  </TabItem>
+</Tabs>
+
+<Aside type="note">
+In cases, where the compiler at code-generation time, determines that the function is a `leaf function` (does not call other functions) and the function addresses can be resolved within 2GB OR the function does not refer to global data, then GOT address is not needed to be stored, so the function prologue with `%r15` can be omitted.
+</Aside>
+
+---
+
+- https://en.wikipedia.org/wiki/X86_memory_models
+- https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html#index-mcmodel_003d-7
+- https://llvm.org/devmtg/2023-10/slides/quicktalks/Eubanks-CompromisesWithLargeX86-64Binaries.pdf
