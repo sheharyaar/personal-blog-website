@@ -53,12 +53,15 @@ export default defineConfig({
         link: '/notes',
       }, {
         label: 'Linux Containers',
+        collapsed: true,
         autogenerate: {directory: 'notes/linux-containers'},
       }, {
         label: 'Assembly Language',
+        collapsed: true,
         autogenerate: {directory: 'notes/assembly'},
       }, {
         label: 'System V ABI, ELF and Shared Libraries',
+        collapsed: true,
         autogenerate: {directory: 'notes/sysv-elf-dso'},
       },],
       disable404Route: true,
