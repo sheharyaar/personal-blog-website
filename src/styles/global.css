@@ -1,14 +1,24 @@
 @import "https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
+@variant dark (&:where(.dark, .dark *));
 
-.katex {
-  color: inherit;
+@theme {
+  --color-codeLight: #dd5073;
+  --color-codeDark: #63eb90;
+
+  --font-sans: "Atkinson", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono: "Iosevka", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  --rotate-45: 45deg;
+  --rotate-135: 135deg;
+  --rotate-225: 225deg;
+  --rotate-315: 315deg;
 }
 
 @layer base {
+  /* Font Face Declarations */
   @font-face {
     font-family: "Atkinson";
     src: url("/fonts/atkinson-regular.woff") format("woff");
@@ -29,86 +39,88 @@
     font-family: "Iosevka";
     src: url("/fonts/iosevka-nerd-regular.ttf");
   }
-}
 
-html {
-  overflow-y: scroll;
-  color-scheme: light;
-  background-color: white;
-  font-family: "Atkinson", sans-serif;
-  
-}
-
-html.dark {
-  color-scheme: dark;
-  background-color: black;
-}
-
-html,
-body {
-  @apply h-full w-full antialiased;
-  @apply bg-white dark:bg-black;
-  @apply text-black/75 dark:text-white/75;
-}
-
-body {
-  @apply relative flex flex-col;
-}
-
-main {
-  @apply flex flex-col flex-1 bg-white dark:bg-black;
-}
-
-header {
-  @apply border-b;
-  @apply transition-all duration-300 ease-in-out;
-}
-
-header:not(.scrolled) {
-  @apply bg-transparent border-transparent;
-}
-
-header.scrolled {
-  @apply bg-white/75 dark:bg-black/50;
-  @apply border-black/10 dark:border-white/25;
-  @apply backdrop-blur-sm saturate-200;
-}
-
-article {
-  @apply prose dark:prose-invert max-w-full pb-0;
-}
-
-.page-heading {
-  @apply font-semibold text-black dark:text-white;
-}
-
-.blend {
-  @apply transition-all duration-300 ease-in-out;
-}
-
-/* Light mode styling for code elements */
-code {
-  @apply text-codeLight;
-  font-family: "Iosevka";
-}
-
-/* Dark mode styling for code elements */
-.dark code {
-  @apply text-codeDark;
-  font-family: "Iosevka";
-}
-
-/** Light theme particles on home page */
-@keyframes animateParticle {
-  from {
-    transform: translateY(0px);
+  html {
+    overflow-y: scroll;
+    color-scheme: light;
+    background-color: white;
+    font-family: var(--font-sans);
   }
-  to {
-    transform: translateY(-2000px);
+
+  html.dark {
+    color-scheme: dark;
+    background-color: black;
+  }
+
+  html,
+  body {
+    @apply h-full w-full antialiased;
+    @apply bg-white dark:bg-black;
+    @apply text-black/75 dark:text-white/75;
+  }
+
+  body {
+    @apply relative flex flex-col;
   }
 }
 
-/** styles for public /animation.js */
+@layer components {
+  article {
+    @apply prose dark:prose-invert max-w-none pb-0;
+  }
+
+  .prose code::before,
+  .prose code::after {
+    content: "";
+  }
+
+  main {
+    @apply flex flex-col flex-1 bg-white dark:bg-black;
+  }
+
+  header {
+    @apply border-b transition-all duration-300 ease-in-out;
+  }
+
+  header:not(.scrolled) {
+    @apply bg-transparent border-transparent;
+  }
+
+  header.scrolled {
+    @apply bg-white/75 dark:bg-black/50;
+    @apply border-black/10 dark:border-white/25;
+    @apply backdrop-blur-sm saturate-200;
+  }
+
+  .page-heading {
+    @apply font-semibold text-black dark:text-white;
+  }
+
+  .blend {
+    @apply transition-all duration-300 ease-in-out;
+  }
+
+  /* Code Specific Styling */
+  code {
+    @apply text-codeLight;
+    font-family: var(--font-mono);
+  }
+
+  .dark code {
+    @apply text-codeDark;
+  }
+
+  article img {
+    @apply py-5 block mx-auto;
+  }
+}
+
+/* Utilities / Third Party overrides */
+.katex {
+  color: inherit;
+}
+
+/** styles for public/animation.js */
 .animate {
   opacity: 0;
   transform: translateY(50px);
@@ -120,10 +132,12 @@ code {
   transform: translateY(0);
 }
 
-article img {
-  padding-top: 20px;
-  padding-bottom: 20px;
-  display: block;
-  margin: 0 auto;
+/** Light theme particles on home page */
+@keyframes animateParticle {
+  from {
+    transform: translateY(0px);
+  }
+  to {
+    transform: translateY(-2000px);
+  }
 }
-

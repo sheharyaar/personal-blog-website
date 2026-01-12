@@ -1,7 +1,7 @@
 import { defineConfig } from "astro/config";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
-import tailwind from "@astrojs/tailwind";
+import tailwindcss from "@tailwindcss/vite";
 import solidJs from "@astrojs/solid-js";
 import rehypePrettyCode from "rehype-pretty-code";
 import remarkMath from 'remark-math';
@@ -11,6 +11,9 @@ import starlight from "@astrojs/starlight";
 
 // https://astro.build/config
 export default defineConfig({
+  vite: {
+    plugins: [tailwindcss({ applyBaseStyles: false })],
+  },
   site: "https://sheharyaar.in",
   markdown: {
     syntaxHighlight: "shiki",
@@ -35,7 +38,6 @@ export default defineConfig({
     }),
     sitemap(),
     solidJs(),
-    tailwind({ applyBaseStyles: false }),
     starlight({title: "Sheharyaar's Notes", expressiveCode: false, customCss: ['./src/styles/starlight.css',],
       favicon: '/brand.png',
       head: [

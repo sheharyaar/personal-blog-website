@@ -1,58 +1,90 @@
-/* Dark mode colors. */
+/* 1. Define the Layer Hierarchy */
+/* The right-most layer always wins. */
+@layer  tailwind, starlight, base, overrides;
+
 @import "https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css";
 
-.katex {
-  color: inherit;
+/* 2. Import Tailwind into its own layer */
+@layer tailwind {
+  @import "tailwindcss";
 }
 
-@font-face {
+
+/* 3. Global Theme Variables */
+@theme {
+  --color-codeLight: #dd5073;
+  --color-codeDark: #63eb90;
+  
+  --font-mono: "Iosevka", ui-monospace, monospace;
+}
+
+/* 4. The 'dark' variant for your manual icons/buttons */
+@variant dark (&:where(.dark, [data-theme="dark"], [data-theme="dark"] *));
+
+/* 5. Base Styles & Variable Overrides */
+@layer base {
+  @font-face {
     font-family: "Iosevka";
     src: url("/fonts/iosevka-nerd-regular.ttf");
   }
 
-:root {
-	--sl-color-accent-low: #430922;
-	--sl-color-accent: #c00065;
-	--sl-color-accent-high: #63eb90;
-	--sl-color-white: #ffffff;
-	--sl-color-gray-1: #eeeeee;
-	--sl-color-gray-2: #c8c8c8;
-	--sl-color-gray-3: #a4a4a4;
-	--sl-color-gray-4: #585858;
-	--sl-color-gray-5: #383838;
-	--sl-color-gray-6: black;
-	--sl-color-black: black;
-	--sl-color-bg-inline-code: var(--sl-color-gray-5);
-	--sl-font-mono: "Iosevka";
+  /* Force Starlight to use your specific palette */
+  :root {
+    --sl-color-accent-low: #430922;
+    --sl-color-accent: #c00065;
+    --sl-color-accent-high: #63eb90;
+    --sl-color-white: #ffffff;
+    --sl-color-gray-1: #eeeeee;
+    --sl-color-gray-2: #c8c8c8;
+    --sl-color-gray-3: #a4a4a4;
+    --sl-color-gray-4: #585858;
+    --sl-color-gray-5: #383838;
+    
+    /* Pure Black Overrides */
+    --sl-color-gray-6: #000000;
+    --sl-color-black: #000000;
+    
+    --sl-color-bg-inline-code: var(--sl-color-gray-5);
+    --sl-font-mono: var(--font-mono);
+  }
 
-	/* --sl-text-code:initial;
-	--sl-text-code-sm: initial; */
-	code {
-		@apply text-codeDark;
-		font-family: "Iosevka";
-	}
+  :root[data-theme='light'] {
+    --sl-color-accent-low: #dd5073;
+    --sl-color-accent: #a40055;
+    --sl-color-accent-high: #600030;
+    --sl-color-white: #181818;
+    --sl-color-gray-1: #272727;
+    --sl-color-gray-2: #383838;
+    --sl-color-gray-3: #585858;
+    --sl-color-gray-4: #8b8b8b;
+    --sl-color-gray-5: #c2c2c2;
+    --sl-color-gray-6: #eeeeee;
+    --sl-color-black: #ffffff;
+    --sl-color-bg-inline-code: var(--sl-color-gray-6);
+  }
 }
-/* Light mode colors. */
-:root[data-theme='light'] {
-	--sl-color-accent-low: #dd5073;
-	--sl-color-accent: #a40055;
-	--sl-color-accent-high: #600030;
-	--sl-color-white: #181818;
-	--sl-color-gray-1: #272727;
-	--sl-color-gray-2: #383838;
-	--sl-color-gray-3: #585858;
-	--sl-color-gray-4: #8b8b8b;
-	--sl-color-gray-5: #c2c2c2;
-	--sl-color-gray-6: #eeeeee;
-	--sl-color-gray-7: #f6f6f6;
-	--sl-color-black: #ffffff;
-	--sl-font-mono: "Iosevka";
-	--sl-color-bg-inline-code: var(--sl-color-gray-6);
 
-	/* --sl-text-code:initial;
-	--sl-text-code-sm: initial; */
-	code {
-		@apply text-codeLight;
-		font-family: "Iosevka";
-	}	
+/* 6. High-Priority Overrides */
+@layer overrides {
+  /* Force background colors on Starlight's structural elements */
+  [data-theme="dark"] body,
+  [data-theme="dark"] .main-frame,
+  [data-theme="dark"] header {
+    background-color: #000000 !important;
+  }
+
+  /* Apply your code colors specifically to Starlight's markdown content */
+  .sl-markdown-content code:not(pre code) {
+    @apply text-codeDark;
+    font-family: var(--font-mono);
+  }
+
+  :root[data-theme='light'] .sl-markdown-content code:not(pre code) {
+    @apply text-codeLight;
+  }
+
+  /* Ensure KaTeX inherits text color correctly */
+  .katex {
+    color: inherit !important;
+  }
 }
