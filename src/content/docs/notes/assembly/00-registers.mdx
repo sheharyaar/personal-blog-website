@@ -14,18 +14,20 @@ import caller_callee from "./caller_callee.png";
 
 ## Registers
 
--   `8` registers with names and `8` registers with numbers:
-    -   rax, rbx, rcx, rdx, rsi, rdi, rsp, rbp
-    -   r8, r9, r10, r11, r12, r13, r14, r15
--   **Prefixes**
-    -   `r` prefix is for 64-bit
-    -   `e` is for 32-bit (eax, ebx, exc, etc.)
-    -   no prefix is used for 16-bit or 2 byte- registers (ax, bx, cx, etc.)
-    -   `h` and `l` suffix is used for 8-bits, where `h` is for higher 8-bit and `l` is for lower 8-bit.
+- `8` registers with names and `8` registers with numbers:
+```asm
+rax, rbx, rcx, rdx, rsi, rdi, rsp, rbp
+r8, r9, r10, r11, r12, r13, r14, r15
+```
+- **Prefixes**
+  - `r` prefix is for 64-bit
+  - `e` is for 32-bit (eax, ebx, exc, etc.)
+  - no prefix is used for 16-bit or 2 byte- registers (ax, bx, cx, etc.)
+  - `h` and `l` suffix is used for 8-bits, where `h` is for higher 8-bit and `l` is for lower 8-bit.
 
 <div>
-    <Image src={register_prefix} alt="Register Prefix" />
-    <figcaption class="text-center">Fig 1.1 - Register Prefix</figcaption>
+    <Image src={register_prefix} width="500px" alt="Register Prefix" />
+    <figcaption class="">Fig 1.1 - Register Prefix</figcaption>
 </div>
 
 ### Caller and Callee Saved
@@ -33,14 +35,22 @@ import caller_callee from "./caller_callee.png";
 Caller saved (or must be preserved by the caller — the caller can expect the values to be changed after a
 function or system call). These are also called as `call-clobbered` registers.
 
--   _rax, rcx, rdx, r8-r11_
+```asm
+rax, rcx, rdx, r8-r11
+```
 
 Callee saved (the function must store and restore these registers, the caller can expect them to be unchanged)
 
--   _rbx, rbp, rdi, rsi, rsp, r12-r15_
+```asm
+rbx, rbp, rdi, rsi, rsp, r12-r15
+```
 
 <div>
-    <Image src={caller_callee} alt="Caller and Callee Saved Registers" width="500" />
-    <figcaption class="text-center">Fig 1.2 - Caller and Callee Saved Registers</figcaption>
-    <figcaption class="text-center">Source - System V ABI Document</figcaption>
+    <Image src={caller_callee} alt="Caller and Callee Saved Registers" width="500px" />
+    <figcaption class="text">Fig 1.2 - Caller and Callee Saved Registers.<br/>Source: System V ABI Document</figcaption>
 </div>
+
+## Debug Registers
+
+There are certain registers that can be used to create exceptions and for debugging purposes. These are discussed in the [Debugging](#) page.
+{/* TODO: attach debug page */}

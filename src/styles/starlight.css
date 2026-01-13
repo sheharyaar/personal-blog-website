@@ -1,6 +1,6 @@
 /* 1. Define the Layer Hierarchy */
 /* The right-most layer always wins. */
-@layer  tailwind, starlight, base, overrides;
+@layer  tailwind, starlight, base, components, utilities, overrides;
 
 @import "https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css";
 
@@ -9,6 +9,7 @@
   @import "tailwindcss";
 }
 
+@plugin "@tailwindcss/typography";
 
 /* 3. Global Theme Variables */
 @theme {
@@ -66,14 +67,12 @@
 
 /* 6. High-Priority Overrides */
 @layer overrides {
-  /* Force background colors on Starlight's structural elements */
   [data-theme="dark"] body,
   [data-theme="dark"] .main-frame,
   [data-theme="dark"] header {
     background-color: #000000 !important;
   }
 
-  /* Apply your code colors specifically to Starlight's markdown content */
   .sl-markdown-content code:not(pre code) {
     @apply text-codeDark;
     font-family: var(--font-mono);
@@ -86,5 +85,15 @@
   /* Ensure KaTeX inherits text color correctly */
   .katex {
     color: inherit !important;
+  }
+
+  .sl-markdown-content {
+    @apply prose dark:prose-invert max-w-none;
+  }
+  
+  /* Starlight specific fix to prevent prose from breaking layout */
+  .sl-markdown-content :where(ul, ol) {
+    list-style: revert; 
+    padding-inline-start: 1.5em;
   }
 }
