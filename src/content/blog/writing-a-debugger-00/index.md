@@ -27,6 +27,5 @@ This post just summarises the events that led me to this project. The actual tec
 2. [Writing a Debugger 02 - Inspecting Registers and Memory](#) 
 3. [Writing a Debugger 03 - Symbol Resolution and Dynamic Linking](#) 
 4. [Writing a Debugger 04 - Hardware Breakpoints and Watchpoints](#) 
-5. [Writing a Debugger 05 - Backtrace , Stack Unwinding and Debug Frames](#) 
 
 The project is available under MIT License on Github: https://github.com/sheharyaar/sherlock
