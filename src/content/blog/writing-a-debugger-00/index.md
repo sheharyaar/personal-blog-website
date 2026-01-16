@@ -23,9 +23,9 @@ If you have read this far, I thank you for your time ♥️ and I hope my blogs
 
 This post just summarizes the events that led me to this project. The actual technical stuff starts from the next blog. It will be a five-part series which discusses the technical requirements, challenges and *some* code that would be suitable even for a newbie like me to get a decent grasp of the concepts. The link to the series:
 
-1. [Writing a Debugger 01 - Stop/Resume a Program](#) 
-2. [Writing a Debugger 02 - Inspecting Registers and Memory](#) 
-3. [Writing a Debugger 03 - Symbol Resolution and Dynamic Linking](#) 
-4. [Writing a Debugger 04 - Hardware Breakpoints and Watchpoints](#) 
+1. [Writing a Debugger 01 - Stop/Resume a Program](https://www.sheharyaar.in/blog/writing-a-debugger-01) 
+2. [Writing a Debugger 02 - Inspecting Registers and Memory](https://www.sheharyaar.in/blog/writing-a-debugger-02) 
+3. [Writing a Debugger 03 - Symbol Resolution and Dynamic Linking](https://www.sheharyaar.in/blog/writing-a-debugger-03) 
+4. [Writing a Debugger 04 - Hardware Breakpoints and Watchpoints](https://www.sheharyaar.in/blog/writing-a-debugger-04) 
 
 The project is available under MIT License on Github: https://github.com/sheharyaar/sherlock
