@@ -1,5 +1,8 @@
 ---
 import { ViewTransitions } from "astro:transitions";
+import "@fontsource/cormorant-garamond/600.css";
+import "@fontsource/cormorant-garamond/700.css";
+import "@fontsource/cormorant-garamond/500-italic.css";
 
 interface Props {
     title: string;
@@ -15,7 +18,9 @@ const { title, description, image = "/open-graph.jpeg" } = Astro.props;
 <!-- Global Metadata -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<link rel="icon" type="image/svg+xml" href="/brand.png" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="apple-touch-icon" href="/brand.png" />
+<meta name="theme-color" content="#0b0b0c" />
 <meta name="generator" content={Astro.generator} />
 
 <link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin />

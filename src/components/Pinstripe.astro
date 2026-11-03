@@ -1,0 +1,23 @@
+---
+// Double gold pinstripe, like the hand-painted lines on a Bullet's tank,
+// with an optional bat in the middle.
+import { BAT_PATH, BAT_VIEWBOX } from "@lib/bat"
+import { cn } from "@lib/utils"
+
+type Props = {
+  bat?: boolean
+  class?: string
+}
+
+const { bat = true, class: className } = Astro.props
+---
+
+<div class={cn("pinstripe", className)} role="separator" aria-hidden="true">
+  <span class="pinstripe-line"></span>
+  {bat && (
+    <svg class="pinstripe-bat" viewBox={BAT_VIEWBOX}>
+      <path d={BAT_PATH} />
+    </svg>
+  )}
+  {bat && <span class="pinstripe-line"></span>}
+</div>

@@ -1,0 +1,25 @@
+---
+import PageLayout from "@layouts/PageLayout.astro"
+import Gotham from "@components/Gotham.astro"
+---
+
+<PageLayout title="Page not found" description="The signal is lit, but there's nobody here.">
+  <section class="relative h-screen w-full overflow-hidden">
+    <Gotham empty />
+    <div class="relative z-10 h-full flex items-center justify-center px-5 pb-[18vh]">
+      <div class="animate hero-ink text-center">
+        <p class="eyebrow">Error 404 · Page not found</p>
+        <h1 class="mt-4 font-display font-bold text-6xl md:text-7xl leading-none tracking-tight text-black dark:text-white">
+          Why do we fall?
+        </h1>
+        <p class="mt-4 font-display italic font-medium text-xl md:text-2xl text-black/70 dark:text-white/75">
+          So we can learn to pick ourselves up.
+        </p>
+        <div class="flex flex-wrap gap-3 justify-center mt-8">
+          <a href="/" class="btn-gold">Pick yourself up</a>
+          <a href="/search" class="btn-ghost">Search the archives</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</PageLayout>

@@ -4,18 +4,20 @@ import { cn } from "@lib/utils"
 const { pathname } = Astro.url
 const subpath = pathname.match(/[^/]+/g)
 import Container from "@components/Container.astro"
+import { BAT_PATH, BAT_VIEWBOX } from "@lib/bat"
 ---
 
 <header id="header" class="fixed top-0 w-full h-16 z-50 ">
   <Container size="md">
     <div class="relative h-full w-full">
       <div class="absolute left-0 top-1/2 -translate-y-1/2 flex gap-1 font-semibold">
-        <a href="/" class="flex gap-1 text-current hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out">
-          <img class="h-5 dark:hidden" src="/brand.png" />
-          <img class="h-5 hidden dark:block" src="/brand.png" />
-          <div>
+        <a href="/" class="group flex items-center gap-2 text-black dark:text-white">
+          <svg class="h-3.5 w-auto fill-gold transition-transform duration-300 ease-in-out group-hover:-translate-y-0.5" viewBox={BAT_VIEWBOX} aria-hidden="true">
+            <path d={BAT_PATH} />
+          </svg>
+          <span class="font-display text-xl font-bold tracking-wide">
             {SITE.TITLE}
-          </div>
+          </span>
         </a>
       </div>
 
@@ -23,7 +25,7 @@ import Container from "@components/Container.astro"
       <nav class="hidden md:flex items-center justify-center text-sm gap-1">
         {
           LINKS.map((LINK) => (
-            <a href={LINK.HREF} class={cn("h-8 rounded-full px-3 text-current", "flex items-center justify-center", "transition-colors duration-300 ease-in-out", pathname === LINK.HREF || "/" + subpath?.[0] === LINK.HREF ? "bg-black dark:bg-white text-white dark:text-black" : "hover:bg-black/5 dark:hover:bg-white/20 hover:text-black dark:hover:text-white")}>
+            <a href={LINK.HREF} class={cn("h-8 rounded-full px-3 text-current", "flex items-center justify-center", "transition-colors duration-300 ease-in-out", pathname === LINK.HREF || "/" + subpath?.[0] === LINK.HREF ? "bg-gold text-white dark:text-black font-bold" : "hover:bg-black/5 dark:hover:bg-white/10 hover:text-black dark:hover:text-white")}>
               {LINK.TEXT}
             </a>
           ))
@@ -48,8 +50,9 @@ import Container from "@components/Container.astro"
         <svg class="size-full block dark:hidden">
           <use href="/ui.svg#sun"></use>
         </svg>
-        <svg class="size-full hidden dark:block">
-          <use href="/ui.svg#moon"></use>
+        <svg class="size-full hidden dark:block" viewBox="0 11 200 90" aria-hidden="true">
+          <ellipse cx="100" cy="56" rx="99" ry="44" class="fill-gold" />
+          <path d={BAT_PATH} class="fill-black" />
         </svg>
       </button>
 

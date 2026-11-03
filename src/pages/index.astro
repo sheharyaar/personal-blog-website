@@ -2,6 +2,8 @@
 import { getCollection } from "astro:content"
 import PageLayout from "@layouts/PageLayout.astro"
 import ArrowCard from "@components/ArrowCard"
+import Gotham from "@components/Gotham.astro"
+import Pinstripe from "@components/Pinstripe.astro"
 import { SITE, SOCIALS } from "@consts"
 
 const posts = (await getCollection("blog"))
@@ -19,41 +21,43 @@ const projects = (await getCollection("projects"))
 <PageLayout title="Home" description={SITE.DESCRIPTION}>
   
   <!-- HERO -->
-  <section class="relative h-screen w-full">
-    <div id="hero-bg" class='animate absolute inset-0 overflow-hidden'>
-      <div id="hero-img" class="h-full bg-cover bg-center bg-opacity-5 dark:bg-[url('/img/home-bg.jpg')] bg-[url('/img/home-bg-light.png')]">
-      </div>
-    </div>
-    <div class="animate absolute h-full w-full flex items-center justify-center">
-      <div class='relative w-full h-full flex items-center justify-center'>
-        <div class='p-5 text-center'>
-          <p class='animated text-lg md:text-xl lg:text-2xl font-semibold opacity-75'>
-            Greetings visitor, I am
-          </p>
-          <p class='animated text-2xl md:text-3xl lg:text-4xl font-bold text-black dark:text-white'>
-            Sheharyaar
-          </p>
-          <p class='animated text-sm md:text-base lg:text-lg opacity-75'>
-            Standing on the shoulders of giants
-          </p>
-          <div id="ctaButtons" class='animated flex flex-wrap gap-4 justify-center mt-5'>
-            <a href='/blog' class='py-2 px-4 rounded truncate text-xs md:text-sm lg:text-base bg-black dark:bg-white text-white dark:text-black hover:opacity-75 blend'>
-              Read my blog
-            </a>
-            <a href='/work' class='py-2 px-4 truncate rounded text-xs md:text-sm lg:text-base border border-black/25 dark:border-white/25 hover:bg-black/5 hover:dark:bg-white/15 blend'>
-              View my work
-            </a>
-          </div>
+  <section class="relative h-screen w-full overflow-hidden">
+    <Gotham />
+    <div class="relative z-10 h-full flex items-center justify-center px-5 pb-[18vh]">
+      <div class="animate hero-ink text-center">
+        <p class="eyebrow">
+          Greetings visitor, I am
+        </p>
+        <h1 class="mt-4 font-display font-bold text-7xl md:text-8xl leading-none tracking-tight text-black dark:text-white">
+          Sheharyaar
+        </h1>
+        <p class="mt-4 font-display italic font-medium text-xl md:text-2xl text-black/70 dark:text-white/75">
+          Standing on the shoulders of giants
+        </p>
+        <div class="flex flex-wrap gap-3 justify-center mt-8">
+          <a href="/blog" class="btn-gold">
+            Read my blog
+          </a>
+          <a href="/work" class="btn-ghost">
+            View my work
+          </a>
         </div>
       </div>
     </div>
   </section>
 
   <div class="relative bg-white dark:bg-black">
-    <div class="mx-auto max-w-screen-sm p-5 space-y-24 pb-16">
+    <div class="mx-auto max-w-screen-sm p-5 pt-20 space-y-16 pb-16">
 
       <!-- About Section -->
       <section class="animate">
+        <div class="flex items-center gap-5 mb-8">
+          <img src="/brand.png" alt="Portrait of Sheharyaar" width="72" height="72" class="size-18 shrink-0 rounded-full object-cover bg-black/5 dark:bg-white/5 ring-1 ring-gold-soft ring-offset-4 ring-offset-white dark:ring-offset-black" />
+          <div>
+            <p class="eyebrow">Who I am</p>
+            <p class="section-title mt-2">{SITE.AUTHOR}</p>
+          </div>
+        </div>
         <article>
           <p>I am a final year undergraduate student at IIT Kharagpur, enrolled in Dual Degree B.Tech & M.Tech course in the department of Mining Engineering.</p>
           <p>Though my major is Mining Engineering, my primary focus is on Computer Science and Engineering. I am a self-taught Software Engineer with past internship experiences in Software Engineering.</p>
@@ -65,14 +69,17 @@ const projects = (await getCollection("projects"))
         </article>
       </section>
 
+      <Pinstripe class="animate" />
+
       <!-- Blog Preview Section -->
       <section class="animate">
-        <div class="space-y-4">
-          <div class="flex justify-between">
-            <p class="font-semibold text-black dark:text-white">
-              Recent posts
-            </p>
-            <a href="/blog" class="w-fit col-span-3 group flex gap-1 items-center underline decoration-[.5px] decoration-black/25 dark:decoration-white/50 hover:decoration-black dark:hover:decoration-white text-black dark:text-white underline-offset-2 blend">
+        <div class="space-y-6">
+          <div class="flex items-end justify-between">
+            <div>
+              <p class="eyebrow">From the blog</p>
+              <h2 class="section-title mt-2">Recent posts</h2>
+            </div>
+            <a href="/blog" class="w-fit col-span-3 group flex gap-1 items-center underline decoration-[.5px] decoration-gold-soft/60 hover:decoration-gold text-black dark:text-white underline-offset-2 blend">
               <span class="text-black/75 dark:text-white/75 group-hover:text-black group-hover:dark:text-white blend">
                 All posts
               </span>
@@ -88,14 +95,17 @@ const projects = (await getCollection("projects"))
         </div>
       </section>
 
+      <Pinstripe class="animate" />
+
       <!-- Project Preview Section -->
       <section class="animate">
-        <div class="space-y-4">
-          <div class="flex justify-between">
-            <p class="font-semibold text-black dark:text-white">
-              Recent projects
-            </p>
-            <a href="/projects" class="w-fit col-span-3 group flex gap-1 items-center underline decoration-[.5px] decoration-black/25 dark:decoration-white/50 hover:decoration-black dark:hover:decoration-white text-black dark:text-white underline-offset-2 blend">
+        <div class="space-y-6">
+          <div class="flex items-end justify-between">
+            <div>
+              <p class="eyebrow">Built to understand</p>
+              <h2 class="section-title mt-2">Recent projects</h2>
+            </div>
+            <a href="/projects" class="w-fit col-span-3 group flex gap-1 items-center underline decoration-[.5px] decoration-gold-soft/60 hover:decoration-gold text-black dark:text-white underline-offset-2 blend">
               <span class="text-black/75 dark:text-white/75 group-hover:text-black group-hover:dark:text-white blend">
                 All projects
               </span>
@@ -111,13 +121,14 @@ const projects = (await getCollection("projects"))
         </div>
       </section>
 
+      <Pinstripe class="animate" />
+
       <!-- Contact Section -->
       <section class="animate">
         <div>
-          <p class="font-semibold text-black dark:text-white">
-            Let's Connect
-          </p>
-          <p>
+          <p class="eyebrow">Signal me</p>
+          <h2 class="section-title mt-2">Let's Connect</h2>
+          <p class="mt-4">
             Reach out to me via email or on social media.
           </p>
           <div class="grid grid-cols-4 gap-y-2 mt-4 auto-cols-min">
@@ -128,13 +139,14 @@ const projects = (await getCollection("projects"))
                 </span>
               </div>
               <div class="col-span-3 truncate">
-                <a href={social.HREF} target="_blank" class="w-fit col-span-3 group flex gap-1 items-center underline decoration-[.5px] decoration-black/25 dark:decoration-white/50 hover:decoration-black dark:hover:decoration-white text-black dark:text-white underline-offset-2 blend">
+                <a href={social.HREF} target="_blank" class="w-fit col-span-3 group flex gap-1 items-center underline decoration-[.5px] decoration-gold-soft/60 hover:decoration-gold text-black dark:text-white underline-offset-2 blend">
                   <span class="text-black/75 dark:text-white/75 group-hover:text-black group-hover:dark:text-white blend">
                     {social.TEXT}
                   </span>
                 </a>
               </div>
             ))}
+          </div>
         </div>
       </section>
     </div>

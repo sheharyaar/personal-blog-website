@@ -29,39 +29,40 @@
     src: url("/fonts/iosevka-nerd-regular.ttf");
   }
 
-  /* Force Starlight to use your specific palette */
+  /* Black & Gold, matching src/styles/global.css */
   :root {
-    --sl-color-accent-low: #430922;
-    --sl-color-accent: #c00065;
-    --sl-color-accent-high: #63eb90;
-    --sl-color-white: #ffffff;
-    --sl-color-gray-1: #eeeeee;
-    --sl-color-gray-2: #c8c8c8;
-    --sl-color-gray-3: #a4a4a4;
-    --sl-color-gray-4: #585858;
-    --sl-color-gray-5: #383838;
-    
-    /* Pure Black Overrides */
-    --sl-color-gray-6: #000000;
-    --sl-color-black: #000000;
-    
-    --sl-color-bg-inline-code: var(--sl-color-gray-5);
+    --sl-color-accent-low: #2a2110;
+    --sl-color-accent: #c9a24a;
+    --sl-color-accent-high: #ecd9a6;
+    --sl-color-white: #efe8da;
+    --sl-color-gray-1: #e6dfd0;
+    --sl-color-gray-2: #c4bdae;
+    --sl-color-gray-3: #9c968a;
+    --sl-color-gray-4: #5b5850;
+    --sl-color-gray-5: #34322d;
+
+    /* Ink instead of pure black */
+    --sl-color-gray-6: #0b0b0c;
+    --sl-color-black: #0b0b0c;
+
+    --sl-color-bg-inline-code: #1d1a12;
     --sl-font-mono: var(--font-mono);
   }
 
   :root[data-theme='light'] {
-    --sl-color-accent-low: #dd5073;
-    --sl-color-accent: #a40055;
-    --sl-color-accent-high: #600030;
-    --sl-color-white: #181818;
-    --sl-color-gray-1: #272727;
-    --sl-color-gray-2: #383838;
-    --sl-color-gray-3: #585858;
-    --sl-color-gray-4: #8b8b8b;
-    --sl-color-gray-5: #c2c2c2;
-    --sl-color-gray-6: #eeeeee;
-    --sl-color-black: #ffffff;
-    --sl-color-bg-inline-code: var(--sl-color-gray-6);
+    --sl-color-accent-low: #eadcb8;
+    --sl-color-accent: #7d5c16;
+    --sl-color-accent-high: #3d2c08;
+    --sl-color-white: #0b0b0c;
+    --sl-color-gray-1: #1c1b18;
+    --sl-color-gray-2: #34322d;
+    --sl-color-gray-3: #55524a;
+    --sl-color-gray-4: #8a857a;
+    --sl-color-gray-5: #c4bcab;
+    --sl-color-gray-6: #e6dece;
+    --sl-color-gray-7: #ebe4d6;
+    --sl-color-black: #efe8da;
+    --sl-color-bg-inline-code: #e3d8c0;
   }
 }
 
@@ -70,16 +71,26 @@
   [data-theme="dark"] body,
   [data-theme="dark"] .main-frame,
   [data-theme="dark"] header {
-    background-color: #000000 !important;
+    background-color: #0b0b0c !important;
   }
 
   .sl-markdown-content code:not(pre code) {
-    @apply text-codeDark;
+    color: var(--sl-color-white);
     font-family: var(--font-mono);
+    padding: 0.12em 0.38em;
+    border-radius: 4px;
+    border: 1px solid color-mix(in oklab, var(--sl-color-accent) 24%, transparent);
   }
 
-  :root[data-theme='light'] .sl-markdown-content code:not(pre code) {
-    @apply text-codeLight;
+  .sl-markdown-content {
+    --tw-prose-links: var(--sl-color-accent);
+    --tw-prose-bullets: var(--sl-color-accent);
+    --tw-prose-counters: var(--sl-color-accent);
+    --tw-prose-quote-borders: var(--sl-color-accent);
+    --tw-prose-invert-links: var(--sl-color-accent);
+    --tw-prose-invert-bullets: var(--sl-color-accent);
+    --tw-prose-invert-counters: var(--sl-color-accent);
+    --tw-prose-invert-quote-borders: var(--sl-color-accent);
   }
 
   /* Ensure KaTeX inherits text color correctly */

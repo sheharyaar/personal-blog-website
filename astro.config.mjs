@@ -39,7 +39,7 @@ export default defineConfig({
     sitemap(),
     solidJs(),
     starlight({title: "Sheharyaar's Notes", expressiveCode: false, customCss: ['./src/styles/starlight.css',],
-      favicon: '/brand.png',
+      favicon: '/favicon.svg',
       head: [
         {
           tag: 'script',
