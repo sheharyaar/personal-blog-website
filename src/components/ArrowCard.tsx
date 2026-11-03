@@ -8,7 +8,7 @@ type Props = {
 
 export default function ArrowCard({entry, pill}: Props) {
     return (
-      <a href={`/${entry.collection}/${entry.slug}`} class="group p-4 gap-3 flex items-center border rounded-lg hover:bg-gold-soft/5 border-black/15 dark:border-white/15 hover:border-gold-soft/70 transition-colors duration-300 ease-in-out">
+      <a href={`/${entry.collection}/${entry.id}`} class="group p-4 gap-3 flex items-center border rounded-lg hover:bg-gold-soft/5 border-black/15 dark:border-white/15 hover:border-gold-soft/70 transition-colors duration-300 ease-in-out">
       <div class="w-full group-hover:text-black group-hover:dark:text-white blend">
         <div class="flex flex-wrap items-center gap-2">
           {pill &&

@@ -1,4 +1,5 @@
 import { defineConfig } from "astro/config";
+import { unified } from "@astrojs/markdown-remark";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
@@ -15,27 +16,25 @@ export default defineConfig({
     plugins: [tailwindcss({ applyBaseStyles: false })],
   },
   site: "https://sheharyaar.in",
+  // Astro 7 defaults to JSX whitespace rules; keep the HTML-aware behaviour the templates were written for.
+  compressHTML: true,
   markdown: {
+    // Astro 7 defaults to the Sätteri processor, which doesn't run remark/rehype plugins.
+    // Stay on unified() so remark-math, rehype-katex and rehype-pretty-code keep working.
+    processor: unified({
+      remarkPlugins: [remarkMath],
+      rehypePlugins: [rehypePrettyCode, rehypeKatex],
+      gfm: true,
+      smartypants: true,
+    }),
     syntaxHighlight: "shiki",
-    gfm: true,
-    smartypants: true,
     shikiConfig: {
       theme: "ayu-dark",
     },
-    rehypePlugins: [rehypePrettyCode, rehypeKatex],
-    remarkPlugins: [remarkMath],
   },
   integrations: [
-    mdx({
-      remarkPlugins: [remarkMath],
-      rehypePlugins: [rehypePrettyCode, rehypeKatex],
-      syntaxHighlight: "shiki",
-      gfm: true,
-      smartypants: true,
-      shikiConfig: {
-        theme: "ayu-dark",
-      },
-    }),
+    // Inherits the markdown config above.
+    mdx(),
     sitemap(),
     solidJs(),
     starlight({title: "Sheharyaar's Notes", expressiveCode: false, customCss: ['./src/styles/starlight.css',],
@@ -56,15 +55,15 @@ export default defineConfig({
       }, {
         label: 'Linux Containers',
         collapsed: true,
-        autogenerate: {directory: 'notes/linux-containers'},
+        items: [{autogenerate: {directory: 'notes/linux-containers', collapsed: true}}],
       }, {
         label: 'Assembly Language',
         collapsed: true,
-        autogenerate: {directory: 'notes/assembly'},
+        items: [{autogenerate: {directory: 'notes/assembly', collapsed: true}}],
       }, {
         label: 'System V ABI, ELF and Shared Libraries',
         collapsed: true,
-        autogenerate: {directory: 'notes/sysv-elf-dso'},
+        items: [{autogenerate: {directory: 'notes/sysv-elf-dso', collapsed: true}}],
       },],
       disable404Route: true,
     }),

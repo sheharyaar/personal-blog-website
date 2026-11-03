@@ -1,5 +1,4 @@
 ---
-import { ViewTransitions } from "astro:transitions";
 import "@fontsource/cormorant-garamond/600.css";
 import "@fontsource/cormorant-garamond/700.css";
 import "@fontsource/cormorant-garamond/500-italic.css";
@@ -59,7 +58,6 @@ const { title, description, image = "/open-graph.jpeg" } = Astro.props;
 <script is:inline src="/js/scroll.js"></script>
 <script is:inline src="/js/animate.js"></script>
 
-<!-- <ViewTransitions  /> -->
 
 <script>
     import type { TransitionBeforeSwapEvent } from "astro:transitions/client";

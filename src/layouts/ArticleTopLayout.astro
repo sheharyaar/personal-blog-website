@@ -37,7 +37,7 @@ const blogUrl = collection === "projects" ? data.blogUrl : null
       <svg class="size-5 stroke-current">
         <use href="/ui.svg#book-open"/>
       </svg>
-      {readingTime(body)}
+      {readingTime(body ?? "")}
     </div>
   </div>
   <h1 class="font-display text-4xl md:text-5xl font-bold leading-tight tracking-tight text-black dark:text-white mt-3">

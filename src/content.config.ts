@@ -1,19 +1,24 @@
-import { defineCollection, z } from "astro:content";
-import { docsSchema } from '@astrojs/starlight/schema';
+import { defineCollection } from "astro:content"
+import { glob } from "astro/loaders"
+import { z } from "astro/zod"
+import { docsLoader } from "@astrojs/starlight/loaders"
+import { docsSchema } from "@astrojs/starlight/schema"
 
+// Same files the legacy collections picked up: every .md/.mdx, skipping _-prefixed ones.
+const entries = (dir: string) => glob({ pattern: "**/[^_]*.{md,mdx}", base: `./src/content/${dir}` })
 
 const work = defineCollection({
-  type: "content",
+  loader: entries("work"),
   schema: z.object({
     company: z.string(),
     role: z.string(),
     dateStart: z.coerce.date(),
     dateEnd: z.union([z.coerce.date(), z.string()]),
   }),
-});
+})
 
 const blog = defineCollection({
-  type: "content",
+  loader: entries("blog"),
   schema: z.object({
     title: z.string(),
     summary: z.string(),
@@ -21,10 +26,10 @@ const blog = defineCollection({
     tags: z.array(z.string()),
     draft: z.boolean().optional(),
   }),
-});
+})
 
 const projects = defineCollection({
-  type: "content",
+  loader: entries("projects"),
   schema: z.object({
     title: z.string(),
     summary: z.string(),
@@ -35,10 +40,10 @@ const projects = defineCollection({
     repoUrl: z.string().optional(),
     blogUrl: z.string().optional(),
   }),
-});
+})
 
 const snippets = defineCollection({
-  type: "content",
+  loader: entries("snippets"),
   schema: z.object({
     title: z.string(),
     summary: z.string(),
@@ -46,6 +51,8 @@ const snippets = defineCollection({
     tags: z.array(z.string()),
     draft: z.boolean().optional(),
   }),
-});
+})
 
-export const collections = { work, blog, projects, snippets, docs: defineCollection({ schema: docsSchema() }),};
+const docs = defineCollection({ loader: docsLoader(), schema: docsSchema() })
+
+export const collections = { work, blog, projects, snippets, docs }
