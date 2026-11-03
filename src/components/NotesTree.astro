@@ -1,0 +1,33 @@
+---
+import type { Notebook } from "@lib/content"
+
+type Props = { notebooks: Notebook[]; current: string }
+const { notebooks, current } = Astro.props
+const currentBook = current.split("/")[0]
+---
+
+<nav aria-label="Notebooks" class="notes-tree">
+  <a href="/notes/" class:list={["notes-tree-home", { active: current === "index" }]}>All notes</a>
+  {
+    notebooks.map((book) => (
+      <details open={book.id === currentBook}>
+        <summary>{book.entry.data.title}</summary>
+        <ul>
+          <li>
+            <a href={book.href} class:list={{ active: current === book.id }} aria-current={current === book.id ? "page" : undefined}>
+              Overview
+            </a>
+          </li>
+          {book.chapters.map(({ entry, href }) => (
+            <li>
+              <a href={href} class:list={{ active: current === entry.id }} aria-current={current === entry.id ? "page" : undefined}>
+                <span>{entry.data.title}</span>
+                {entry.data.status && <span class="note-status">{entry.data.status}</span>}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </details>
+    ))
+  }
+</nav>

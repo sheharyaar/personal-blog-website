@@ -539,3 +539,281 @@
     animation: none;
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* Callouts: > [!note] … (src/lib/markdown/remark-callouts.mjs)        */
+/* ------------------------------------------------------------------ */
+.callout {
+  --callout: var(--gold);
+  --callout-icon: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='12' r='9'/><path d='M12 11v6M12 7.5v.01'/></svg>");
+  margin: 1.6em 0;
+  padding: 0.8rem 1.1rem;
+  border-left: 3px solid var(--callout);
+  border-radius: 0 6px 6px 0;
+  background: color-mix(in oklab, var(--callout) 8%, transparent);
+}
+.callout-tip {
+  --callout: #2f7a4f;
+  --callout-icon: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z'/></svg>");
+}
+.callout-warning {
+  --callout: #a3640f;
+  --callout-icon: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 3 2 20h20z'/><path d='M12 10v4M12 17v.01'/></svg>");
+}
+.callout-danger {
+  --callout: var(--redline);
+  --callout-icon: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M8 3h8l5 5v8l-5 5H8l-5-5V8z'/><path d='M12 8v5M12 16v.01'/></svg>");
+}
+.callout-quote {
+  --callout: var(--fg-muted);
+  --callout-icon: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><path d='M7 7h4v4c0 3-2 5-4 6M14 7h4v4c0 3-2 5-4 6'/></svg>");
+}
+.dark .callout-tip { --callout: #6cbf8b; }
+.dark .callout-warning { --callout: #e3a447; }
+
+:is(article, .prose) .callout-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  font-weight: 700;
+  color: var(--callout);
+}
+.callout-title::before {
+  content: "";
+  flex: none;
+  width: 1.1em;
+  height: 1.1em;
+  background: currentColor;
+  mask: var(--callout-icon) center / contain no-repeat;
+}
+:is(article, .prose) .callout-body > :first-child { margin-top: 0.45em; }
+:is(article, .prose) .callout-body > :last-child { margin-bottom: 0; }
+details.callout > summary { cursor: pointer; list-style: none; }
+details.callout > summary::-webkit-details-marker { display: none; }
+details.callout > summary::after {
+  content: "";
+  margin-left: auto;
+  width: 0.5em;
+  height: 0.5em;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 0.2s ease;
+}
+details.callout[open] > summary::after { transform: rotate(45deg); }
+
+/* ------------------------------------------------------------------ */
+/* Figures: image + italic caption line (remark-figures.mjs)          */
+/* ------------------------------------------------------------------ */
+:is(article, .prose) figure { margin: 2em 0; }
+:is(article, .prose) figure img { margin: 0 auto; padding: 0; border-radius: 4px; }
+:is(article, .prose) figure figcaption {
+  margin-top: 0.7em;
+  text-align: center;
+  font-size: 0.875em;
+  color: var(--fg-muted);
+}
+html:not(.dark) .figure-dark,
+.dark .figure-light { display: none !important; }
+
+/* ------------------------------------------------------------------ */
+/* Tags and archive lists                                             */
+/* ------------------------------------------------------------------ */
+.tag-list { display: flex; flex-wrap: wrap; gap: 0.4rem; list-style: none; margin: 0; padding: 0; }
+.tag-list a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.65rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  color: var(--fg-body);
+  text-decoration: none;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+.tag-list a:hover,
+.tag-list a.active { border-color: var(--gold-soft); color: var(--fg); }
+.tag-count { font-family: var(--font-mono); font-size: 0.7rem; color: var(--fg-muted); }
+
+.archive-year { margin-top: 2.75rem; }
+.archive-year > h2 {
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 700;
+  font-variant-numeric: lining-nums;
+  color: var(--fg);
+}
+.archive-list { --date-col: 4.25rem; list-style: none; margin: 0; padding: 0; }
+.archive-list-full { --date-col: 7.25rem; }
+.archive-list > li {
+  display: grid;
+  grid-template-columns: var(--date-col) minmax(0, 1fr);
+  gap: 1rem;
+  padding: 0.95rem 0;
+  border-bottom: 1px dashed var(--rule);
+}
+.archive-list time { padding-top: 0.15rem; font-family: var(--font-mono); font-size: 0.8rem; color: var(--gold); white-space: nowrap; }
+.archive-list a { font-weight: 700; color: var(--fg); text-decoration: none; }
+.archive-list a:hover { text-decoration: underline; text-decoration-color: var(--gold-soft); text-underline-offset: 3px; }
+.archive-list p { margin-top: 0.15rem; font-size: 0.9rem; }
+.archive-tags { display: flex; flex-wrap: wrap; gap: 0.7rem; list-style: none; margin: 0.35rem 0 0; padding: 0; }
+.archive-tags a { font-weight: 400; font-size: 0.75rem; color: var(--fg-muted); }
+
+/* ------------------------------------------------------------------ */
+/* Notes: notebook tree | note | on this page                         */
+/* ------------------------------------------------------------------ */
+.notes-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3rem;
+  width: 100%;
+  max-width: 88rem;
+  margin: 0 auto;
+  padding: 6.5rem 1.25rem 3rem;
+}
+@media (min-width: 1024px) { .notes-shell { grid-template-columns: 15rem minmax(0, 1fr); } }
+@media (min-width: 1280px) { .notes-shell { grid-template-columns: 15rem minmax(0, 1fr) 13rem; } }
+.notes-main { width: 100%; max-width: 46rem; min-width: 0; justify-self: center; }
+
+.notes-sidebar,
+.notes-toc { display: none; }
+@media (min-width: 1024px) {
+  .notes-sidebar { display: block; position: sticky; top: 5.5rem; align-self: start; max-height: calc(100vh - 7rem); overflow-y: auto; padding-right: 0.25rem; }
+  .notes-mobile-tree { display: none; }
+}
+@media (min-width: 1280px) {
+  .notes-toc { display: block; position: sticky; top: 5.5rem; align-self: start; max-height: calc(100vh - 7rem); overflow-y: auto; }
+  .notes-mobile-toc { display: none; }
+}
+
+.notes-tree { font-size: 0.9rem; }
+.notes-tree a {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  color: var(--fg-body);
+  text-decoration: none;
+}
+.notes-tree a:hover { color: var(--fg); background: color-mix(in oklab, var(--gold-soft) 10%, transparent); }
+.notes-tree a.active { color: var(--fg); font-weight: 700; background: color-mix(in oklab, var(--gold-soft) 18%, transparent); }
+.notes-tree-home { margin-bottom: 0.4rem; }
+.notes-tree details { margin-top: 0.2rem; }
+.notes-tree summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.35rem 0.6rem;
+  font-weight: 700;
+  color: var(--fg);
+  cursor: pointer;
+  list-style: none;
+}
+.notes-tree summary::-webkit-details-marker { display: none; }
+.notes-tree summary::after {
+  content: "";
+  flex: none;
+  width: 0.4em;
+  height: 0.4em;
+  border-right: 1.5px solid var(--fg-muted);
+  border-bottom: 1.5px solid var(--fg-muted);
+  transform: rotate(-45deg);
+  transition: transform 0.2s ease;
+}
+.notes-tree details[open] > summary::after { transform: rotate(45deg); }
+.notes-tree ul { list-style: none; margin: 0.1rem 0 0.5rem 0.6rem; padding-left: 0.5rem; border-left: 1px solid var(--rule); }
+
+.note-status {
+  flex: none;
+  align-self: center;
+  padding: 0.05rem 0.45rem;
+  border: 1px solid color-mix(in oklab, var(--gold-soft) 55%, transparent);
+  border-radius: 999px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--gold);
+}
+
+.notes-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--rule); }
+.notes-crumbs { display: flex; gap: 0.5rem; font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); }
+.notes-crumbs a { color: inherit; text-decoration: none; }
+.notes-crumbs a:hover { text-decoration: underline; }
+.notes-header h1 {
+  margin-top: 0.6rem;
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 5vw, 3rem);
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: lining-nums;
+  color: var(--fg);
+}
+.notes-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.9rem; margin-top: 0.8rem; font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--fg-muted); }
+.notes-meta:empty { display: none; }
+.notes-summary { margin-top: 0.8rem; font-size: 1.1rem; }
+
+.notes-mobile-panel { margin-bottom: 1rem; border: 1px solid var(--rule); border-radius: 8px; }
+.notes-mobile-panel > summary { padding: 0.6rem 0.9rem; font-size: 0.9rem; font-weight: 700; color: var(--fg); cursor: pointer; }
+.notes-mobile-panel[open] > summary { border-bottom: 1px solid var(--rule); }
+.notes-mobile-panel > :not(summary) { padding: 0.6rem 0.5rem; }
+
+.notes-toc .eyebrow { margin-bottom: 0.8rem; }
+.notes-toc-list { list-style: none; margin: 0; padding: 0 0 0 0.8rem; border-left: 1px solid var(--rule); font-size: 0.85rem; }
+.notes-mobile-panel .notes-toc-list { margin: 0.6rem 0.9rem; }
+.notes-toc-list li { margin: 0.4rem 0; }
+.notes-toc-list .depth-3 { padding-left: 0.8rem; }
+.notes-toc-list a { color: var(--fg-muted); text-decoration: none; }
+.notes-toc-list a:hover { color: var(--fg); }
+
+.notes-chapters { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); }
+.notes-chapters h2 { font-family: var(--font-display); font-size: 1.6rem; font-weight: 700; color: var(--fg); }
+.notes-chapters ol { margin-top: 0.75rem; padding-left: 1.6rem; list-style: decimal-leading-zero; }
+.notes-chapters li { margin: 0.45rem 0; }
+.notes-chapters li::marker { font-family: var(--font-mono); font-size: 0.85em; color: var(--gold); }
+.notes-chapters a { color: var(--fg); }
+.notes-chapters .note-status { margin-left: 0.5rem; }
+
+.notes-pager { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 3rem; }
+.notes-pager a {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  color: var(--fg);
+  text-decoration: none;
+  transition: border-color 0.2s ease;
+}
+.notes-pager a:hover { border-color: var(--gold-soft); }
+.notes-pager .next { grid-column: 2; text-align: right; }
+.notes-pager small { font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); }
+
+/* ------------------------------------------------------------------ */
+/* Search (Pagefind UI)                                               */
+/* ------------------------------------------------------------------ */
+.site-search {
+  --pagefind-ui-scale: 0.9;
+  --pagefind-ui-primary: var(--gold);
+  --pagefind-ui-text: var(--fg);
+  --pagefind-ui-background: var(--color-white);
+  --pagefind-ui-border: var(--rule);
+  --pagefind-ui-tag: color-mix(in oklab, var(--gold-soft) 16%, transparent);
+  --pagefind-ui-border-width: 1px;
+  --pagefind-ui-border-radius: 8px;
+  --pagefind-ui-font: var(--font-sans);
+}
+.dark .site-search { --pagefind-ui-background: var(--color-black); }
+.site-search mark { background: color-mix(in oklab, var(--gold-soft) 35%, transparent); color: inherit; }
+
+/* Keep long-form pages inside the viewport on phones: long URLs wrap, wide tables scroll. */
+:is(article, .prose) a { overflow-wrap: anywhere; }
+:is(article, .prose) table { display: block; max-width: 100%; overflow-x: auto; }
+.site-search .pagefind-ui mark { background: color-mix(in oklab, var(--gold-soft) 35%, transparent); color: inherit; }

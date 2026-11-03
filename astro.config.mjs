@@ -3,12 +3,12 @@ import { unified } from "@astrojs/markdown-remark";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
-import solidJs from "@astrojs/solid-js";
 import rehypePrettyCode from "rehype-pretty-code";
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
-
-import starlight from "@astrojs/starlight";
+import remarkCallouts from './src/lib/markdown/remark-callouts.mjs';
+import remarkFigures from './src/lib/markdown/remark-figures.mjs';
+import remarkContentLinks from './src/lib/markdown/remark-content-links.mjs';
 
 // https://astro.build/config
 export default defineConfig({
@@ -16,13 +16,21 @@ export default defineConfig({
     plugins: [tailwindcss({ applyBaseStyles: false })],
   },
   site: "https://sheharyaar.in",
+  // Snippets became the Cheatsheets notebook; keep old links working.
+  redirects: {
+    "/snippets": "/notes/cheatsheets/",
+    "/snippets/dtschema/dtschema": "/notes/cheatsheets/dtschema/",
+    "/snippets/netfilter-madness/netfilter-madness": "/notes/cheatsheets/netfilter-madness/",
+    "/snippets/network-namespace/network-ns": "/notes/cheatsheets/network-namespace/",
+    "/snippets/qemu/qemu": "/notes/cheatsheets/qemu/",
+  },
   // Astro 7 defaults to JSX whitespace rules; keep the HTML-aware behaviour the templates were written for.
   compressHTML: true,
   markdown: {
     // Astro 7 defaults to the Sätteri processor, which doesn't run remark/rehype plugins.
     // Stay on unified() so remark-math, rehype-katex and rehype-pretty-code keep working.
     processor: unified({
-      remarkPlugins: [remarkMath],
+      remarkPlugins: [remarkMath, remarkCallouts, remarkFigures, remarkContentLinks],
       rehypePlugins: [rehypePrettyCode, rehypeKatex],
       gfm: true,
       smartypants: true,
@@ -36,36 +44,5 @@ export default defineConfig({
     // Inherits the markdown config above.
     mdx(),
     sitemap(),
-    solidJs(),
-    starlight({title: "Sheharyaar's Notes", expressiveCode: false, customCss: ['./src/styles/starlight.css',],
-      favicon: '/favicon.svg',
-      head: [
-        {
-          tag: 'script',
-          content: `window.addEventListener('load', () => document.querySelector('.site-title').href += 'notes/')`,
-        },
-        {
-          tag: 'meta',
-          attrs: {property: 'og:image', content: 'https://sheharyaar.in/open-graph.jpeg'},
-        }
-      ],
-      sidebar: [{
-        label: 'Notes Homepage',
-        link: '/notes',
-      }, {
-        label: 'Linux Containers',
-        collapsed: true,
-        items: [{autogenerate: {directory: 'notes/linux-containers', collapsed: true}}],
-      }, {
-        label: 'Assembly Language',
-        collapsed: true,
-        items: [{autogenerate: {directory: 'notes/assembly', collapsed: true}}],
-      }, {
-        label: 'System V ABI, ELF and Shared Libraries',
-        collapsed: true,
-        items: [{autogenerate: {directory: 'notes/sysv-elf-dso', collapsed: true}}],
-      },],
-      disable404Route: true,
-    }),
   ],
 });

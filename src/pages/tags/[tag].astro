@@ -1,0 +1,47 @@
+---
+import PageLayout from "@layouts/PageLayout.astro"
+import TopLayout from "@layouts/TopLayout.astro"
+import BottomLayout from "@layouts/BottomLayout.astro"
+import { getTagIndex, type TaggedItem } from "@lib/tags"
+import { formatDate } from "@lib/utils"
+
+export async function getStaticPaths() {
+  const index = await getTagIndex()
+  return [...index].map(([slug, { tag, items }]) => ({ params: { tag: slug }, props: { tag, items } }))
+}
+
+const { tag, items } = Astro.props as { tag: string; items: TaggedItem[] }
+const groups = (["Posts", "Notes", "Projects"] as const)
+  .map((kind) => [kind, items.filter((i) => i.kind === kind)] as const)
+  .filter(([, list]) => list.length > 0)
+---
+
+<PageLayout title={`#${tag}`} description={`Posts, notes and projects tagged ${tag}.`}>
+  <TopLayout>
+    <p class="animate eyebrow"><a href="/tags/">All tags</a></p>
+    <div class="animate page-heading mt-3">#{tag}</div>
+    <p class="animate mt-6">{items.length} {items.length === 1 ? "entry" : "entries"} tagged {tag}.</p>
+  </TopLayout>
+  <BottomLayout>
+    <div class="animate">
+      {
+        groups.map(([kind, list]) => (
+          <section class="archive-year">
+            <h2>{kind}</h2>
+            <ul class="archive-list archive-list-full">
+              {list.map((item) => (
+                <li>
+                  <time datetime={item.date?.toISOString()}>{item.date ? formatDate(item.date) : ""}</time>
+                  <div>
+                    <a href={item.href}>{item.title}</a>
+                    {item.summary && <p>{item.summary}</p>}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+    </div>
+  </BottomLayout>
+</PageLayout>

@@ -1,0 +1,21 @@
+---
+import { render } from "astro:content"
+import NotesLayout from "@layouts/NotesLayout.astro"
+import { getNotesTree, type Note } from "@lib/content"
+
+export async function getStaticPaths() {
+  const { all } = await getNotesTree()
+  return all.map((entry) => ({
+    params: { slug: entry.id === "index" ? undefined : entry.id },
+    props: { entry },
+  }))
+}
+
+const { entry } = Astro.props as { entry: Note }
+const { notebooks, flat } = await getNotesTree()
+const { Content, headings } = await render(entry)
+---
+
+<NotesLayout entry={entry} headings={headings} notebooks={notebooks} flat={flat}>
+  <Content />
+</NotesLayout>

@@ -1,0 +1,13 @@
+---
+title: Linux Containers
+order: 1
+---
+
+> [!note]
+> I am a student and **not** a kernel expert. If you find any
+> incorrect or misleading information, please email me at: [sheharyaar48@gmail.com](mailto:sheharyaar48@gmail.com). This
+> will help to fix my article and improve the reader's experience.
+
+This series of articles contains my notes on Linux Containers where I explore container **primitives** -- **capabilities**, **namespaces** and **cgroups** in detail at both userspace and kernel level. 
+
+I have also implemented a simple low-level container runtime. Notes on implementation are available in the [last article](../linux-containers/04-project).

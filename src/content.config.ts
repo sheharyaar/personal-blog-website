@@ -1,8 +1,6 @@
 import { defineCollection } from "astro:content"
 import { glob } from "astro/loaders"
 import { z } from "astro/zod"
-import { docsLoader } from "@astrojs/starlight/loaders"
-import { docsSchema } from "@astrojs/starlight/schema"
 
 // Same files the legacy collections picked up: every .md/.mdx, skipping _-prefixed ones.
 const entries = (dir: string) => glob({ pattern: "**/[^_]*.{md,mdx}", base: `./src/content/${dir}` })
@@ -23,6 +21,7 @@ const blog = defineCollection({
     title: z.string(),
     summary: z.string(),
     date: z.coerce.date(),
+    updated: z.coerce.date().optional(),
     tags: z.array(z.string()),
     draft: z.boolean().optional(),
   }),
@@ -42,17 +41,22 @@ const projects = defineCollection({
   }),
 })
 
-const snippets = defineCollection({
-  loader: entries("snippets"),
+// Long-form notes, grouped into notebooks: notes/<notebook>/index.md is the notebook's landing page,
+// notes/<notebook>/<NN-chapter>.md are its chapters (ordered by file name), notes/index.md is /notes.
+const notes = defineCollection({
+  loader: entries("notes"),
   schema: z.object({
     title: z.string(),
-    summary: z.string(),
-    date: z.coerce.date(),
-    tags: z.array(z.string()),
+    summary: z.string().optional(),
+    date: z.coerce.date().optional(),
+    updated: z.coerce.date().optional(),
+    tags: z.array(z.string()).optional(),
+    // e.g. "TODO", "In Progress" - shown as a badge in the sidebar
+    status: z.string().optional(),
+    // notebook landing pages: position in the sidebar
+    order: z.number().optional(),
     draft: z.boolean().optional(),
   }),
 })
 
-const docs = defineCollection({ loader: docsLoader(), schema: docsSchema() })
-
-export const collections = { work, blog, projects, snippets, docs }
+export const collections = { work, blog, projects, notes }

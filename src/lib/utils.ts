@@ -19,3 +19,8 @@ export function readingTime(html: string) {
   const readingTimeMinutes = ((wordCount / 200) + 1).toFixed()
   return `${readingTimeMinutes} min read`
 }
+
+/** "Jan 15" - for lists already grouped by year */
+export function formatMonthDay(date: Date) {
+  return Intl.DateTimeFormat("en-US", { month: "short", day: "2-digit" }).format(date)
+}

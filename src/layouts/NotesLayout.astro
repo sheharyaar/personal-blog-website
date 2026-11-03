@@ -1,0 +1,102 @@
+---
+import type { MarkdownHeading } from "astro"
+import PageLayout from "@layouts/PageLayout.astro"
+import NotesTree from "@components/NotesTree.astro"
+import { formatDate, readingTime } from "@lib/utils"
+import { type Note, type Notebook, tagHref } from "@lib/content"
+
+type Props = {
+  entry: Note
+  headings: MarkdownHeading[]
+  notebooks: Notebook[]
+  flat: { entry: Note; href: string }[]
+}
+
+const { entry, headings, notebooks, flat } = Astro.props
+const { title, summary, status, updated, date, tags } = entry.data
+const isRoot = entry.id === "index"
+const book = isRoot ? undefined : notebooks.find((b) => b.id === entry.id.split("/")[0])
+const isLanding = !!book && book.id === entry.id
+
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3)
+const position = flat.findIndex((n) => n.entry.id === entry.id)
+const prev = position > 0 ? flat[position - 1] : undefined
+const next = isRoot ? flat[0] : flat[position + 1]
+const lastChange = updated ?? date
+---
+
+<PageLayout title={book && !isLanding ? `${title} · ${book.entry.data.title}` : title} description={summary ?? `Notes: ${title}`}>
+  <div class="notes-shell">
+    <aside class="notes-sidebar">
+      <NotesTree notebooks={notebooks} current={entry.id} />
+    </aside>
+
+    <div class="notes-main" data-pagefind-body data-pagefind-filter="section:Notes">
+      <details class="notes-mobile-panel notes-mobile-tree" data-pagefind-ignore="all">
+        <summary>Contents</summary>
+        <NotesTree notebooks={notebooks} current={entry.id} />
+      </details>
+
+      <div class="notes-header">
+        <p class="notes-crumbs" data-pagefind-ignore>
+          <a href="/notes/">Notes</a>
+          {book && !isLanding && <><span aria-hidden="true">/</span><a href={book.href}>{book.entry.data.title}</a></>}
+        </p>
+        <h1>{title}</h1>
+        <p class="notes-meta">
+          {status && <span class="note-status">{status}</span>}
+          {lastChange && <span>{updated ? "Updated" : "Written"} {formatDate(lastChange)}</span>}
+          {!isRoot && !isLanding && <span>{readingTime(entry.body ?? "")}</span>}
+        </p>
+        {summary && <p class="notes-summary">{summary}</p>}
+      </div>
+
+      {toc.length > 1 && (
+        <details class="notes-mobile-panel notes-mobile-toc" data-pagefind-ignore="all">
+          <summary>On this page</summary>
+          <ul class="notes-toc-list">
+            {toc.map((h) => <li class={`depth-${h.depth}`}><a href={`#${h.slug}`}>{h.text}</a></li>)}
+          </ul>
+        </details>
+      )}
+
+      <article>
+        <slot />
+      </article>
+
+      {isLanding && book.chapters.length > 0 && (
+        <section class="notes-chapters" data-pagefind-ignore="all">
+          <h2>Chapters</h2>
+          <ol>
+            {book.chapters.map(({ entry: ch, href }) => (
+              <li>
+                <a href={href}>{ch.data.title}</a>
+                {ch.data.status && <span class="note-status">{ch.data.status}</span>}
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
+
+      {tags && tags.length > 0 && (
+        <ul class="tag-list mt-10">
+          {tags.map((tag) => <li><a href={tagHref(tag)}>#{tag}</a></li>)}
+        </ul>
+      )}
+
+      <nav class="notes-pager" aria-label="Previous and next note" data-pagefind-ignore="all">
+        {prev ? <a href={prev.href} class="prev"><small>Previous</small>{prev.entry.data.title}</a> : <span />}
+        {next && <a href={next.href} class="next"><small>Next</small>{next.entry.data.title}</a>}
+      </nav>
+    </div>
+
+    {toc.length > 1 && (
+      <nav class="notes-toc" aria-label="On this page">
+        <p class="eyebrow">On this page</p>
+        <ul class="notes-toc-list">
+          {toc.map((h) => <li class={`depth-${h.depth}`}><a href={`#${h.slug}`}>{h.text}</a></li>)}
+        </ul>
+      </nav>
+    )}
+  </div>
+</PageLayout>

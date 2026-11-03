@@ -1,0 +1,18 @@
+---
+import { tagHref, tagSlug } from "@lib/content"
+
+type Props = { tags: { tag: string; count: number }[]; current?: string }
+const { tags, current } = Astro.props
+---
+
+<ul class="tag-list">
+  {
+    tags.map(({ tag, count }) => (
+      <li>
+        <a href={tagHref(tag)} class:list={{ active: current === tagSlug(tag) }}>
+          #{tag} <span class="tag-count">{count}</span>
+        </a>
+      </li>
+    ))
+  }
+</ul>

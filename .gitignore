@@ -21,3 +21,7 @@ pnpm-debug.log*
 .DS_Store
 
 .vscode/*.json
+# Obsidian (the vault is src/content): share settings, not per-machine state
+src/content/.obsidian/workspace*.json
+src/content/.obsidian/cache
+src/content/.trash/

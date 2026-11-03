@@ -1,0 +1,11 @@
+---
+title: Network Isolation
+status: TODO
+---
+
+### Resources
+
+- https://ifeanyi.co/posts/linux-namespaces-part-4/
+- https://developers.redhat.com/blog/2018/10/22/introduction-to-linux-interfaces-for-virtual-networking#bridge
+- https://hechao.li/posts/vxlan/
+- https://hechao.li/posts/linux-bridge-part1/

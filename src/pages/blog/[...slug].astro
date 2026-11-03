@@ -8,7 +8,8 @@ import ArticleBottomLayout from "@layouts/ArticleBottomLayout.astro"
 
 // Create the static blog pages
 export async function getStaticPaths() {
-	const posts = await getCollection("blog")
+	// Drafts are only built in `astro dev`, so they can be previewed but never published.
+	const posts = await getCollection("blog", (entry) => import.meta.env.DEV || !entry.data.draft)
 	return posts.map((post) => ({
 		params: { slug: post.id },
 		props: post,
@@ -22,6 +23,7 @@ const { title, summary } = post.data
 ---
 
 <PageLayout title={title} description={summary}>
+  <div data-pagefind-body data-pagefind-filter="section:Blog">
   <TopLayout>
     <div class="animate">
       <ArticleTopLayout entry={post}/>
@@ -32,4 +34,5 @@ const { title, summary } = post.data
       <ArticleBottomLayout entry={post} />
     </div>
   </BottomLayout>
+  </div>
 </PageLayout>

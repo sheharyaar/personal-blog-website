@@ -26,44 +26,36 @@ export const PROJECTS: Page = {
   DESCRIPTION: "Recent projects I have worked on.",
 };
 
-// Snippets Page
-export const SNIPPETS: Page = {
-  TITLE: "Snippets",
-  DESCRIPTION: "My code snippets.",
-};
-
 // Search Page
 export const SEARCH: Page = {
   TITLE: "Search",
-  DESCRIPTION: "Search all posts and projects by keyword.",
+  DESCRIPTION: "Full-text search across every post, note and project.",
+};
+
+// Tags Page
+export const TAGS: Page = {
+  TITLE: "Tags",
+  DESCRIPTION: "Everything I have written, grouped by topic.",
 };
 
 // Links
 export const LINKS: Links = [
   {
-    TEXT: "Home",
-    HREF: "/",
-  },
-  {
-    TEXT: "Work",
-    HREF: "/work",
-  },
-  {
     TEXT: "Blog",
     HREF: "/blog",
+  },
+  {
+    TEXT: "Notes",
+    HREF: "/notes",
   },
   {
     TEXT: "Projects",
     HREF: "/projects",
   },
   {
-    TEXT: "Snippets",
-    HREF: "/snippets",
+    TEXT: "Work",
+    HREF: "/work",
   },
-  {
-    TEXT: "Notes",
-    HREF: "/notes",
-  }
 ];
 
 // Socials

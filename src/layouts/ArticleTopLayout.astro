@@ -2,14 +2,16 @@
 import type { CollectionEntry } from "astro:content"
 import { formatDate, readingTime } from "@lib/utils"
 import Pinstripe from "@components/Pinstripe.astro"
+import { tagHref } from "@lib/content"
 
 type Props = {
-  entry: CollectionEntry<"projects"> | CollectionEntry<"blog"> | CollectionEntry<"snippets">
+  entry: CollectionEntry<"projects"> | CollectionEntry<"blog">
 }
 
 const { entry } = Astro.props
 const { collection, data, body } = entry
-const { title, summary, date } = data
+const { title, summary, date, tags } = data
+const updated = collection === "blog" ? data.updated : undefined
 
 const demoUrl = collection === "projects" ? data.demoUrl : null
 const repoUrl = collection === "projects" ? data.repoUrl : null
@@ -17,7 +19,7 @@ const blogUrl = collection === "projects" ? data.blogUrl : null
 ---
 
 <div>
-  <a href={`/${collection}`} class="group w-fit p-1.5 gap-1.5 text-sm flex items-center border rounded hover:bg-black/5 hover:dark:bg-white/10 border-black/15 dark:border-white/20 transition-colors duration-300 ease-in-out">
+  <a href={`/${collection}/`} data-pagefind-ignore class="group w-fit p-1.5 gap-1.5 text-sm flex items-center border rounded hover:bg-black/5 hover:dark:bg-white/10 border-black/15 dark:border-white/20 transition-colors duration-300 ease-in-out">
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="stroke-current group-hover:stroke-black group-hover:dark:stroke-white">
       <line x1="19" y1="12" x2="5" y2="12" class="scale-x-0 group-hover:scale-x-100 translate-x-3 group-hover:translate-x-0 transition-all duration-300 ease-in-out" />
       <polyline points="12 19 5 12 12 5" class="translate-x-1 group-hover:translate-x-0 transition-all duration-300 ease-in-out" />
@@ -33,6 +35,11 @@ const blogUrl = collection === "projects" ? data.blogUrl : null
       </svg>
       {formatDate(date)}
     </div>
+    {updated && (
+      <div class="flex items-center gap-2">
+        Updated {formatDate(updated)}
+      </div>
+    )}
     <div class="flex items-center gap-2">
       <svg class="size-5 stroke-current">
         <use href="/ui.svg#book-open"/>
@@ -46,6 +53,11 @@ const blogUrl = collection === "projects" ? data.blogUrl : null
   <div class="mt-3 text-lg">
     {summary}
   </div>
+  {tags.length > 0 && (
+    <ul class="tag-list mt-4" data-pagefind-ignore>
+      {tags.map((tag) => <li><a href={tagHref(tag)}>#{tag}</a></li>)}
+    </ul>
+  )}
   {(demoUrl || repoUrl || blogUrl) && 
   <div class="mt-4 flex flex-wrap gap-2">
     {demoUrl && 

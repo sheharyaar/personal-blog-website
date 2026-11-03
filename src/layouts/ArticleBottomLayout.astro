@@ -3,7 +3,7 @@ import PostComments from "@components/PostComments.astro"
 import { type CollectionEntry, getCollection, render } from "astro:content"
 
 type Props = {
-  entry: CollectionEntry<"blog"> | CollectionEntry<"projects"> | CollectionEntry<"snippets">
+  entry: CollectionEntry<"blog"> | CollectionEntry<"projects">
 }
 
 // Get the requested entry
@@ -24,7 +24,7 @@ const next = items[(index + 1) % items.length]
   <article>
     <Content/>
   </article>
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" data-pagefind-ignore="all">
     <a href={`/${prev.collection}/${prev.id}`} class="group p-4 gap-3 flex items-center border rounded-lg hover:bg-black/5 hover:dark:bg-white/10 border-black/15 dark:border-white/20 blend">
       <div class="order-2 w-full h-full group-hover:text-black group-hover:dark:text-white blend">
         <div class="flex flex-wrap gap-2">
@@ -57,5 +57,5 @@ const next = items[(index + 1) % items.length]
     </a>
   </div>
 
-  <PostComments/>
+  <div data-pagefind-ignore="all"><PostComments/></div>
 </div>

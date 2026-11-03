@@ -1,0 +1,25 @@
+---
+import PageLayout from "@layouts/PageLayout.astro"
+import TopLayout from "@layouts/TopLayout.astro"
+import BottomLayout from "@layouts/BottomLayout.astro"
+import TagCloud from "@components/TagCloud.astro"
+import { getTagIndex } from "@lib/tags"
+import { TAGS } from "@consts"
+
+const index = await getTagIndex()
+const tags = [...index.values()]
+  .map(({ tag, items }) => ({ tag, count: items.length }))
+  .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag))
+---
+
+<PageLayout title={TAGS.TITLE} description={TAGS.DESCRIPTION}>
+  <TopLayout>
+    <div class="animate page-heading">{TAGS.TITLE}</div>
+    <p class="animate mt-6">{TAGS.DESCRIPTION}</p>
+  </TopLayout>
+  <BottomLayout>
+    <div class="animate">
+      <TagCloud tags={tags} />
+    </div>
+  </BottomLayout>
+</PageLayout>

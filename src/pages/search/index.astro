@@ -1,29 +1,47 @@
 ---
-import { type CollectionEntry, getCollection } from "astro:content"
 import PageLayout from "@layouts/PageLayout.astro"
 import TopLayout from "@layouts/TopLayout.astro"
 import BottomLayout from "@layouts/BottomLayout.astro"
-import Search from "@components/Search"
 import { SEARCH } from "@consts"
-
-const posts = (await getCollection("blog"))
-  .filter(post => !post.data.draft)
-
-const projects = (await getCollection("projects"))
-  .filter(post => !post.data.draft)
-
-const data = [...posts, ...projects] as CollectionEntry<"blog">[]
 ---
 
 <PageLayout title={SEARCH.TITLE} description={SEARCH.DESCRIPTION}>
   <TopLayout>
-    <div class="animate page-heading">
-      {SEARCH.TITLE}
-    </div>
+    <div class="animate page-heading">{SEARCH.TITLE}</div>
+    <p class="animate mt-6">{SEARCH.DESCRIPTION}</p>
   </TopLayout>
   <BottomLayout>
-    <div class="animate">
-      <Search client:load data={data}/>
-    </div>
+    <div id="search" class="animate site-search"></div>
+    <noscript><p>Search needs JavaScript. You can browse by <a href="/tags/">tag</a> instead.</p></noscript>
   </BottomLayout>
 </PageLayout>
+
+<!-- Pagefind builds its index and UI into dist/pagefind/ after `astro build`. -->
+<script is:inline>
+  (() => {
+    const mount = document.getElementById("search")
+    if (!mount) return
+    const css = document.createElement("link")
+    css.rel = "stylesheet"
+    css.href = "/pagefind/pagefind-ui.css"
+    document.head.append(css)
+
+    const script = document.createElement("script")
+    script.src = "/pagefind/pagefind-ui.js"
+    script.onload = () => {
+      const ui = new window.PagefindUI({
+        element: "#search",
+        showSubResults: true,
+        showImages: false,
+        autofocus: true,
+        translations: { placeholder: "Search posts, notes and projects" },
+      })
+      const q = new URLSearchParams(location.search).get("q")
+      if (q) ui.triggerSearch(q)
+    }
+    script.onerror = () => {
+      mount.innerHTML = "<p>The search index is generated during <code>npm run build</code>. Run <code>npm run build &amp;&amp; npm run preview</code> to try search locally.</p>"
+    }
+    document.body.append(script)
+  })()
+</script>
