@@ -14,7 +14,8 @@ This folder is not published. It's a cheat sheet for writing on the site from Ob
 | Project | `projects/<name>/index.md` | `/projects/<name>/` |
 | Book | `library/<book-name>.md` | listed on `/library/` |
 | Job | `work/<name>.md` | timeline on `/about/` |
-| About text | `about.md` | `/about/` and the home page |
+| About text | `about.md` | `/about/` |
+| Home page intro | `intro.md` | the home page |
 
 New post: create the folder, create a note called `index` inside it, then run **Templates: Insert template → Blog post** from the command palette (Ctrl+P). The title, summary, date and tags appear as Properties at the top. Fill them in there.
 

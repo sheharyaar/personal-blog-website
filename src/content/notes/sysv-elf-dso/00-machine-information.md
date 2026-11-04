@@ -18,7 +18,7 @@ There are multiple levels of feature that a CPU must implement according to the 
 ## Data Types — Size and Alignments
 
 ![Type Sizes|600](./type_size.png)
-*Fig 1.1 - Sizes of static types*
+*Fig 1.2 - Sizes of static types*
 
 For types of N-bit integers
 

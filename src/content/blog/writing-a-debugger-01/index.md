@@ -71,7 +71,7 @@ for setting breakpoints:
 - `DR7` is the control register, it is used to _set_ and _clear_ hardware breakpoints.
 
 For details on how to set and clear these breakpoints refer to my blog on
-[Writing a Debugger 04 - Hardware Breakpoints and Watchpoints](#).
+[Writing a Debugger 04 - Hardware Breakpoints and Watchpoints](https://www.sheharyaar.in/blog/writing-a-debugger-04).
 
 > These registers has a limitation of only 4 breakpoints/watchpoints at a time. This is definitely
 > insufficient, so hence we move to `INT3`.

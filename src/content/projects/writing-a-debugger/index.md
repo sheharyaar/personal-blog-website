@@ -1,6 +1,6 @@
 ---
 title: "Writing a Debugger from Scratch"
-summary: "A debugger for x86_64 Linux from sratch using C, Linux Syscalls and ELF library"
+summary: "A debugger for x86_64 Linux from scratch using C, Linux Syscalls and ELF library"
 date: "Jan 13 2026"
 draft: false
 tags:

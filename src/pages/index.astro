@@ -1,26 +1,43 @@
 ---
 import { getCollection } from "astro:content"
 import PageLayout from "@layouts/PageLayout.astro"
-import ArrowCard from "@components/ArrowCard.astro"
 import Gotham from "@components/Gotham.astro"
+import HomeSection from "@components/HomeSection.astro"
 import Pinstripe from "@components/Pinstripe.astro"
-import { Content as AboutText } from "@content/about.md"
+import { Content as Intro } from "@content/intro.md"
+import { getNotesTree } from "@lib/content"
+import { formatDate, readingTime } from "@lib/utils"
 import { SITE, SOCIALS } from "@consts"
 
-const posts = (await getCollection("blog"))
-  .filter(post => !post.data.draft)
+const allPosts = (await getCollection("blog"))
+  .filter((post) => !post.data.draft)
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-  .slice(0,3)
+
+// One entry per series (its newest post), so a long series doesn't push everything else off the page.
+const seenSeries = new Set<string>()
+const posts = allPosts
+  .filter(({ data: { series } }) => {
+    if (!series) return true
+    if (seenSeries.has(series)) return false
+    seenSeries.add(series)
+    return true
+  })
+  .slice(0, 5)
+  .map((post) => {
+    const parts = post.data.series ? allPosts.filter((other) => other.data.series === post.data.series) : []
+    return { post, parts: parts.length, firstPart: parts.at(-1) }
+  })
+
+const { notebooks } = await getNotesTree()
 
 const projects = (await getCollection("projects"))
-  .filter(project => !project.data.draft)
+  .filter((project) => !project.data.draft)
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-  .slice(0,3)
-
+  .slice(0, 3)
 ---
 
 <PageLayout title="Home" description={SITE.DESCRIPTION}>
-  
+
   <!-- HERO -->
   <section class="relative h-screen w-full overflow-hidden">
     <Gotham />
@@ -50,7 +67,7 @@ const projects = (await getCollection("projects"))
   <div class="relative bg-white dark:bg-black">
     <div class="mx-auto max-w-screen-sm p-5 pt-20 space-y-16 pb-16">
 
-      <!-- About Section -->
+      <!-- Intro -->
       <section class="animate">
         <div class="flex items-center gap-5 mb-8">
           <img src="/brand.png" alt="Portrait of Sheharyaar" width="72" height="72" class="size-18 shrink-0 rounded-full object-cover bg-black/5 dark:bg-white/5 ring-1 ring-gold-soft ring-offset-4 ring-offset-white dark:ring-offset-black" />
@@ -60,61 +77,64 @@ const projects = (await getCollection("projects"))
           </div>
         </div>
         <article>
-          <AboutText />
+          <Intro />
         </article>
+        <p class="home-links"><a href="/about/">More about me →</a></p>
       </section>
 
       <Pinstripe class="animate" />
 
-      <!-- Blog Preview Section -->
-      <section class="animate">
-        <div class="space-y-6">
-          <div class="flex items-end justify-between">
-            <div>
-              <p class="eyebrow">From the blog</p>
-              <h2 class="section-title mt-2">Recent posts</h2>
-            </div>
-            <a href="/blog" class="w-fit col-span-3 group flex gap-1 items-center underline decoration-[.5px] decoration-gold-soft/60 hover:decoration-gold text-black dark:text-white underline-offset-2 blend">
-              <span class="text-black/75 dark:text-white/75 group-hover:text-black group-hover:dark:text-white blend">
-                All posts
-              </span>
-            </a>
-          </div>
-          <ul class="space-y-4">
-            {posts.map((post) => (
-              <li>
-                <ArrowCard entry={post} />
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
+      <HomeSection eyebrow="From the blog" title="Recent posts" href="/blog" linkText="All posts">
+        <ul class="home-posts">
+          {posts.map(({ post, parts, firstPart }) => (
+            <li>
+              <p class="home-post-meta">
+                <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+                <span>{readingTime(post.body ?? "")}</span>
+              </p>
+              <h3><a href={`/blog/${post.id}/`}>{post.data.title}</a></h3>
+              <p class="home-post-summary">{post.data.summary}</p>
+              <p class="home-links">
+                <a href={`/blog/${post.id}/`} aria-label={`Read more: ${post.data.title}`}>Read more →</a>
+                {parts > 1 && firstPart && (
+                  <a href={`/blog/${firstPart.id}/`}>Start the series: {post.data.series} ({parts} posts)</a>
+                )}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </HomeSection>
 
       <Pinstripe class="animate" />
 
-      <!-- Project Preview Section -->
-      <section class="animate">
-        <div class="space-y-6">
-          <div class="flex items-end justify-between">
-            <div>
-              <p class="eyebrow">Built to understand</p>
-              <h2 class="section-title mt-2">Recent projects</h2>
-            </div>
-            <a href="/projects" class="w-fit col-span-3 group flex gap-1 items-center underline decoration-[.5px] decoration-gold-soft/60 hover:decoration-gold text-black dark:text-white underline-offset-2 blend">
-              <span class="text-black/75 dark:text-white/75 group-hover:text-black group-hover:dark:text-white blend">
-                All projects
-              </span>
-            </a>
-          </div>
-          <ul class="space-y-4">
-            {projects.map((project) => (
-              <li>
-                <ArrowCard entry={project} />
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
+      <HomeSection eyebrow="The long form" title="Notebooks" href="/notes" linkText="All notes">
+        <ul class="home-notebooks">
+          {notebooks.map(({ entry, href, chapters }) => (
+            <li>
+              <a href={href}>
+                <span>{entry.data.title}</span>
+                <span class="tag-count">{chapters.length} {chapters.length === 1 ? "chapter" : "chapters"}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </HomeSection>
+
+      <Pinstripe class="animate" />
+
+      <HomeSection eyebrow="Built to understand" title="Recent projects" href="/projects" linkText="All projects">
+        <ul class="archive-list archive-list-full">
+          {projects.map((project) => (
+            <li>
+              <time datetime={project.data.date.toISOString()}>{formatDate(project.data.date)}</time>
+              <div>
+                <a href={`/projects/${project.id}/`}>{project.data.title}</a>
+                <p>{project.data.summary}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </HomeSection>
 
       <Pinstripe class="animate" />
 

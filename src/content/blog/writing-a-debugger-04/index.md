@@ -111,7 +111,7 @@ DR7:
 
 ### Setting the values of the registers
 
-In [Part 2](https://www.sheharyaar.in/blog/writing-a-debugger-02), I discussedto about the process to get and set Debug registers for the tracee (`PTRACE_PEEKUSER` and `PTRACE_POKEUSER`). Let’s get into the details. Let me quote the manpage:
+In [Part 2](https://www.sheharyaar.in/blog/writing-a-debugger-02), I discussed the process to get and set Debug registers for the tracee (`PTRACE_PEEKUSER` and `PTRACE_POKEUSER`). Let’s get into the details. Let me quote the manpage:
 
 > Read a **word** at **offset** `addr` in the tracee's USER area
 > 

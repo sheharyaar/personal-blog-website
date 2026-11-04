@@ -47,7 +47,7 @@ ptrace(PTRACE_POKETEXT/POKEDATA, pid, addr, long_val);
   ([Debug Registers](http://sheharyaar.in/blog/writing-a-debugger-01#debug-registers)).
 
 > This will be discussed further in my blog:
-> [Writing a Debugger 04 - Hardware Breakpoints and Watchpoints](#).
+> [Writing a Debugger 04 - Hardware Breakpoints and Watchpoints](https://www.sheharyaar.in/blog/writing-a-debugger-04).
 > We will discuss the register individually.
 
 So as discussed in the last blog, the following code snippet would help set a breakpoint at an address (the BP

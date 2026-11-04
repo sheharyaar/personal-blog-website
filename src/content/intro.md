@@ -1,0 +1,1 @@
+I aim to have in-depth understanding of the topics I study, and I prefer books and blogs over Youtube videos or tutorials. Currently, I am exploring the Linux Kernel, Networking in the Kernel, Database Systems and Distributed Systems. I use *Arch*, btw.

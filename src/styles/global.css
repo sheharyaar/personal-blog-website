@@ -134,7 +134,7 @@
   header.scrolled {
     @apply bg-white/80 dark:bg-black/70;
     @apply border-gold-soft/25;
-    @apply backdrop-blur-sm saturate-200;
+    @apply backdrop-blur-sm backdrop-saturate-200;
   }
 
   .page-heading {
@@ -681,6 +681,28 @@ html:not(.dark) .figure-dark,
 .archive-list p { margin-top: 0.15rem; font-size: 0.9rem; }
 .archive-tags { display: flex; flex-wrap: wrap; gap: 0.7rem; list-style: none; margin: 0.35rem 0 0; padding: 0; }
 .archive-tags a { font-weight: 400; font-size: 0.75rem; color: var(--fg-muted); }
+
+/* ------------------------------------------------------------------ */
+/* Home                                                               */
+/* ------------------------------------------------------------------ */
+.home-links { display: flex; flex-wrap: wrap; gap: 0.25rem 1.25rem; margin-top: 0.75rem; font-size: 0.875rem; }
+.home-links a { color: var(--fg); text-decoration: underline; text-decoration-color: var(--gold-soft); text-underline-offset: 3px; }
+.home-links a:hover { color: var(--gold); }
+.home-posts { list-style: none; margin: 0; padding: 0; }
+.home-posts > li { padding: 1.4rem 0; background: var(--dash-x) left bottom / var(--dash-gap) 1px repeat-x; }
+.home-posts > li:first-child { padding-top: 0.25rem; }
+.home-posts > li:last-child { padding-bottom: 0; background: none; }
+.home-post-meta { display: flex; flex-wrap: wrap; gap: 0.25rem 1.25rem; font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); }
+.home-posts h3 { margin-top: 0.4rem; font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; font-variant-numeric: lining-nums; line-height: 1.15; }
+.home-posts h3 a { color: var(--fg); text-decoration: none; }
+.home-posts h3 a:hover { text-decoration: underline; text-decoration-color: var(--gold-soft); text-underline-offset: 4px; }
+.home-post-summary { margin-top: 0.4rem; }
+.home-notebooks { list-style: none; margin: 0; padding: 0; }
+.home-notebooks a { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding: 0.75rem 0; background: var(--dash-x) left bottom / var(--dash-gap) 1px repeat-x; font-weight: 700; color: var(--fg); text-decoration: none; }
+.home-notebooks li:first-child a { padding-top: 0.25rem; }
+.home-notebooks li:last-child a { background: none; }
+.home-notebooks a:hover { color: var(--gold); }
+.home-notebooks .tag-count { flex: none; font-weight: 400; }
 
 /* ------------------------------------------------------------------ */
 /* Library                                                            */
