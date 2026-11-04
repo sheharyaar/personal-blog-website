@@ -23,6 +23,8 @@ const blog = defineCollection({
     date: z.coerce.date(),
     updated: z.coerce.date().optional(),
     tags: z.array(z.string()),
+    // Posts with the same series name are linked together, in date order. Left empty in Obsidian, this is null.
+    series: z.string().nullish(),
     draft: z.boolean().optional(),
   }),
 })

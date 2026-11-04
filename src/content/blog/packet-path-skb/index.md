@@ -1,5 +1,6 @@
 ---
 title: "Path of a received packet - Binary to skb"
+series: "Path of a Received Packet"
 summary: "The path of the packet from binary data to sk_buff."
 date: "Sep 14 2024"
 draft: true

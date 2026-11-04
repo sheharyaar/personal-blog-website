@@ -1,5 +1,6 @@
 ---
 title: "Path of a received packet in the Kernel - Overview"
+series: "Path of a Received Packet"
 summary: "Overview on the path of a received packet in the Linux Kernel."
 date: "Sep 11 2024"
 draft: false

@@ -1,5 +1,6 @@
 ---
 title: "Writing a Debugger 03 - ELF and Dynamic Linking"
+series: "Writing a Debugger"
 summary: "ELF and Symbol resolution madness."
 date: "Jan 14 2026 16:00"
 draft: false
@@ -8,9 +9,6 @@ tags:
     - Linux
     - Ptrace
 ---
-
-> This blog is a part of a series, you can find links to all the blogs on this page:
-> [Writing a Debugger from Scratch](https://www.sheharyaar.in/blog/writing-a-debugger-00)
 
 In the previous two blogs we managed to learn how to stop a process, inspect its registers, memories and set breakpoint. The next major task is to add breakpoints using symbol (function) names. That is a very important feature for a debugger. If you have used GDB before, it’s what `break main` or `break puts` does.
 

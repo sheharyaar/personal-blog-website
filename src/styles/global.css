@@ -629,6 +629,8 @@ details.callout[open] > summary::after { transform: rotate(45deg); }
   font-size: 0.875em;
   color: var(--fg-muted);
 }
+/* The "Fig 2.1" at the start of a caption (remark-figures.mjs). */
+.figure-label { font-family: var(--font-mono); font-size: 0.95em; color: var(--gold); }
 html:not(.dark) .figure-dark,
 .dark .figure-light { display: none !important; }
 
@@ -871,8 +873,30 @@ html:has(.stacks, .toc-rail, .toc-panel) { scroll-behavior: smooth; }
 .article-crumbs { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; margin-inline: calc(var(--pad) * -1); padding: 1rem var(--pad); background: var(--dash-x) left bottom / var(--dash-gap) 1px repeat-x; }
 .article-header { padding-top: 2.25rem; }
 .article-meta { display: flex; flex-wrap: wrap; gap: 0.25rem 1.25rem; font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); }
-.article-center .toc-panel { margin-top: 1.5rem; }
-article :is(h2, h3, h4) { scroll-margin-top: 5.5rem; }
+.article-center .fold-panel { margin: 0.6rem 0 0; }
+.article-center .fold-panel:first-child { margin-top: 1.5rem; }
+article :is(h2, h3, h4, figure[id]),
+article [id^="user-content-fn"] { scroll-margin-top: 5.5rem; }
+
+/* Series: the other posts it links to, in order. */
+.series-label { margin-right: 0.5rem; font-family: var(--font-mono); font-size: 0.72rem; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); }
+.series-panel .tag-count { margin-left: 0.5rem; font-weight: 400; }
+.series-panel .series-list { margin: 0.2rem 0.9rem 0.4rem; padding: 0; list-style: none; font-size: 0.9rem; line-height: 1.35; }
+.series-list li { margin: 0.5rem 0; }
+.series-list a { color: var(--fg-body); text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 3px; }
+.series-list a:hover { color: var(--fg); text-decoration-color: var(--gold-soft); }
+.series-list [aria-current] { font-weight: 700; color: var(--gold); }
+
+/* Footnotes: numbered references under a dashed line, the same one that frames the page. */
+article .footnotes { margin-top: 2.5rem; padding-top: 1.1rem; background: var(--dash-x) left top / var(--dash-gap) 1px repeat-x; font-size: 0.9rem; }
+article .footnotes ol { margin: 0; }
+article .footnotes li { margin: 0.35rem 0; }
+article .footnotes li p { margin: 0; }
+article .footnotes li::marker { font-family: var(--font-mono); color: var(--gold); }
+article [data-footnote-ref] { margin-left: 0.1em; padding: 0 0.15em; font-family: var(--font-mono); text-decoration: none; }
+/* The ↩ in the Markdown output shows as an emoji on many systems, so draw a plain arrow instead. */
+article [data-footnote-backref] { margin-left: 0.3rem; font-size: 0; text-decoration: none; }
+article [data-footnote-backref]::after { content: "\2191"; font-family: var(--font-mono); font-size: 0.85rem; }
 
 /* On this page: a rail beside the article on wide screens, a collapsible panel otherwise. */
 .toc-rail { display: none; }
@@ -995,11 +1019,11 @@ article :is(h2, h3, h4) { scroll-margin-top: 5.5rem; }
 .notes-meta:empty { display: none; }
 .notes-summary { margin-top: 0.8rem; font-size: 1.1rem; }
 
-.mobile-panel { margin-bottom: 1rem; border: 1px solid var(--rule); border-radius: 8px; }
-.mobile-panel > summary { padding: 0.6rem 0.9rem; font-size: 0.9rem; font-weight: 700; color: var(--fg); cursor: pointer; }
-.mobile-panel[open] > summary { border-bottom: 1px solid var(--rule); }
-.mobile-panel > :not(summary) { padding: 0.6rem 0.5rem; }
-.mobile-panel .toc-list { margin: 0.6rem 0.9rem; }
+.fold-panel { margin-bottom: 1rem; border: 1px solid var(--rule); border-radius: 8px; }
+.fold-panel > summary { padding: 0.6rem 0.9rem; font-size: 0.9rem; font-weight: 700; color: var(--fg); cursor: pointer; }
+.fold-panel[open] > summary { border-bottom: 1px solid var(--rule); }
+.fold-panel > :not(summary) { padding: 0.6rem 0.5rem; }
+.fold-panel .toc-list { margin: 0.6rem 0.9rem; }
 
 .notes-chapters { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); }
 .notes-chapters h2 { font-family: var(--font-display); font-size: 1.6rem; font-weight: 700; color: var(--fg); }

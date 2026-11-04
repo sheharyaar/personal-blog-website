@@ -1,5 +1,6 @@
 ---
 title: "Writing a Debugger 04 - Hardware Breakpoints and Watchpoints"
+series: "Writing a Debugger"
 summary: "Dive into Hardware Breakpoints and Watchpoints for Debugging."
 date: "Jan 15 2026 00:50"
 draft: false

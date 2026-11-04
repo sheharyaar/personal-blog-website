@@ -34,8 +34,27 @@ const items = (await getCollection(collection))
   .filter((item) => !item.data.draft)
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
 const index = items.findIndex((item) => item.id === entry.id)
-const prev = items[(index - 1 + items.length) % items.length]
-const next = items[(index + 1) % items.length]
+
+// Posts in a series link to each other in date order. Outside a series, or past either end of one,
+// the link goes to the nearest post that isn't in the series.
+const series = collection === "blog" ? data.series : undefined
+const seriesPosts = series
+  ? (await getCollection("blog"))
+      .filter((post) => !post.data.draft && post.data.series === series)
+      .sort((a, b) => a.data.date.getTime() - b.data.date.getTime())
+  : []
+const part = seriesPosts.findIndex((post) => post.id === entry.id)
+
+function nearestOutsideSeries(step: 1 | -1) {
+  const at = (offset: number) => items[(((index + step * offset) % items.length) + items.length) % items.length]
+  for (let offset = 1; offset < items.length; offset++) {
+    if (!seriesPosts.some((post) => post.id === at(offset).id)) return at(offset)
+  }
+  return at(1)
+}
+
+const prev = (part > 0 && seriesPosts[part - 1]) || nearestOutsideSeries(-1)
+const next = (part >= 0 && seriesPosts[part + 1]) || nearestOutsideSeries(1)
 ---
 
 <PageLayout title={title} description={summary}>
@@ -84,6 +103,24 @@ const next = items[(index + 1) % items.length]
       </header>
 
       <div class="animate">
+        {seriesPosts.length > 1 && (
+          <details class="fold-panel series-panel" data-pagefind-ignore="all">
+            <summary>
+              <span class="series-label">Series</span>
+              {series}
+              <span class="tag-count">{seriesPosts.length} posts</span>
+            </summary>
+            <ol class="series-list">
+              {seriesPosts.map((post) => (
+                <li>
+                  {post.id === entry.id
+                    ? <span aria-current="page">{post.data.title}</span>
+                    : <a href={`/blog/${post.id}/`}>{post.data.title}</a>}
+                </li>
+              ))}
+            </ol>
+          </details>
+        )}
         <Toc headings={headings} mode="panel" />
         <article>
           <Content />

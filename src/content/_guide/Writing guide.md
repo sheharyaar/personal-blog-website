@@ -55,6 +55,11 @@ Paste or drag an image in: it is saved next to the note. Then:
 - `|500` sets the width (Obsidian shows it the same way).
 - An italic line directly under the image (no blank line between) becomes its caption.
 - Put `diagram-dark.png` and `diagram-light.png` on consecutive lines and the site shows whichever matches the reader's theme.
+- Start a caption with its number, like `Fig 2.1 - ...`, and you can link to the figure from your text: `[Fig 2.1](#fig-2-1)`.
+
+## Series
+
+To link posts into a series, give each one the same `series` property, for example `Writing a Debugger`. The name has to match exactly. Each post then gets a box listing the whole series in date order, and its Prev and Next links follow the series.
 
 ## Math, code, footnotes, links
 

@@ -8,7 +8,8 @@ type Props = {
 }
 
 const { headings, mode } = Astro.props
-const items = headings.filter((heading) => heading.depth === 2 || heading.depth === 3)
+// "footnote-label" is the visually hidden heading Markdown adds above footnotes, so there's nothing to jump to.
+const items = headings.filter((heading) => (heading.depth === 2 || heading.depth === 3) && heading.slug !== "footnote-label")
 ---
 
 {items.length > 1 && (mode === "rail" ? (
@@ -19,7 +20,7 @@ const items = headings.filter((heading) => heading.depth === 2 || heading.depth 
     </ul>
   </nav>
 ) : (
-  <details class="mobile-panel toc-panel" data-pagefind-ignore="all">
+  <details class="fold-panel toc-panel" data-pagefind-ignore="all">
     <summary>On this page</summary>
     <ul class="toc-list">
       {items.map((h) => <li class={`depth-${h.depth}`}><a href={`#${h.slug}`}>{h.text}</a></li>)}

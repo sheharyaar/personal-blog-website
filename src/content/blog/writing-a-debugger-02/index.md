@@ -1,5 +1,6 @@
 ---
 title: "Writing a Debugger 02 - Inspecting Registers and Memory"
+series: "Writing a Debugger"
 summary: "Blog on how to inspect and change values at a memory address and registers."
 date: "Jan 14 2026 01:00"
 draft: false
@@ -8,9 +9,6 @@ tags:
     - Linux
     - Ptrace
 ---
-
-> This blog is a part of a series, you can find links to all the blogs on this page:
-> [Writing a Debugger from Scratch](https://www.sheharyaar.in/blog/writing-a-debugger-00)
 
 Ok, so we managed to understand how to stop a process in the previous blog. Next we would like to know:
 

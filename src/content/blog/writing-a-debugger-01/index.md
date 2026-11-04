@@ -1,5 +1,6 @@
 ---
 title: "Writing a Debugger 01 - Stop/Resume a Program"
+series: "Writing a Debugger"
 summary: "How to stop a process, the first step towards a debugger."
 date: "Jan 14 2026 00:30"
 draft: false
@@ -9,9 +10,6 @@ tags:
     - Ptrace
 ---
 
-
-> This blog is a part of a series, you can find links to all the blogs on this page:
-> [Writing a Debugger from Scratch](https://www.sheharyaar.in/blog/writing-a-debugger-00)
 
 I will discuss a few questions to set the flow of the entire blog and a help you understand the _why_ behind
 things.

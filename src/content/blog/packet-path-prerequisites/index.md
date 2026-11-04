@@ -1,5 +1,6 @@
 ---
 title: "Path of a received packet - Prerequisites"
+series: "Path of a Received Packet"
 summary: "Important concepts to understand before exploring the Network Path."
 date: "Sep 13 2024"
 draft: false

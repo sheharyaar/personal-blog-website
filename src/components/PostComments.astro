@@ -1,53 +1,36 @@
-<section class="giscus mx-auto mt-10 w-full">
-  <script
-    src="https://giscus.app/client.js"
-    data-repo="sheharyaar/personal-blog-website"
-    data-repo-id="R_kgDOMrGb6A"
-    data-category="Blog Discussion"
-    data-category-id="DIC_kwDOMrGb6M4CiKXV"
-    data-mapping="url"
-    data-strict="0"
-    data-reactions-enabled="1"
-    data-emit-metadata="0"
-    data-input-position="bottom"
-    data-theme="dark"
-    data-lang="en"
-    data-loading="lazy"
-    crossorigin="anonymous"></script>
-</section>
+<section class="giscus mx-auto mt-10 w-full"></section>
 
 <script is:inline>
-  function updateGiscusTheme() {
-    const theme = document.documentElement.classList.contains("dark")
-      ? "dark"
-      : "light";
-    const iframe = document.querySelector("iframe.giscus-frame");
-    if (!iframe) return;
-    iframe.contentWindow.postMessage(
-      { giscus: { setConfig: { theme } } },
-      "https://giscus.app"
-    );
-  }
+  (() => {
+    const siteTheme = () => (document.documentElement.classList.contains("dark") ? "dark" : "light")
 
-  const observer = new MutationObserver(updateGiscusTheme);
-  observer.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ["class"],
-  });
-
-  // Function to check if the iframe is loaded
-  function checkIframe() {
-    const iframe = document.querySelector("iframe.giscus-frame");
-    if (iframe) {
-      iframe.addEventListener("load", function () {
-        setTimeout(updateGiscusTheme, 5000);
-      });
-    } else {
-      // Check again after a short delay if iframe is not yet available
-      setTimeout(checkIframe, 300);
+    // Added from here rather than written in the HTML, so comments start in the reader's theme.
+    const giscus = document.createElement("script")
+    giscus.src = "https://giscus.app/client.js"
+    giscus.async = true
+    giscus.crossOrigin = "anonymous"
+    const settings = {
+      repo: "sheharyaar/personal-blog-website",
+      "repo-id": "R_kgDOMrGb6A",
+      category: "Blog Discussion",
+      "category-id": "DIC_kwDOMrGb6M4CiKXV",
+      mapping: "url",
+      strict: "0",
+      "reactions-enabled": "1",
+      "emit-metadata": "0",
+      "input-position": "bottom",
+      theme: siteTheme(),
+      lang: "en",
+      loading: "lazy",
     }
-  }
+    for (const [name, value] of Object.entries(settings)) giscus.setAttribute(`data-${name}`, value)
+    document.querySelector("section.giscus").append(giscus)
 
-  // Start checking for the iframe
-  checkIframe();
+    // Follow the theme button afterwards.
+    new MutationObserver(() => {
+      document
+        .querySelector("iframe.giscus-frame")
+        ?.contentWindow.postMessage({ giscus: { setConfig: { theme: siteTheme() } } }, "https://giscus.app")
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ["class"] })
+  })()
 </script>

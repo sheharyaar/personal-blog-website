@@ -5,6 +5,7 @@
 //
 // A paragraph holding only images (+ an optional italic caption) becomes <figure>.
 // Images named *-dark.* / *-light.* get classes so only the one matching the theme shows.
+// A caption starting "Fig 2.1" gets that number styled as a label, and the figure can be linked as #fig-2-1.
 
 function walk(node, fn) {
   fn(node)
@@ -17,8 +18,22 @@ function addProps(img, props) {
   img.data = { ...img.data, hProperties: { ...img.data?.hProperties, ...props } }
 }
 
+// Splits "Fig 2.1 - Ring Buffer" into a label and the rest. Returns the figure's id, if it has a number.
+function labelCaption(caption) {
+  const first = caption.children[0]
+  const match = first?.type === "text" && /^(Fig(?:ure|\.)?\s*(\d+(?:\.\d+)*))(.*)$/s.exec(first.value)
+  if (!match) return undefined
+  caption.children = [
+    { type: "text", value: match[1], data: { hName: "span", hProperties: { className: ["figure-label"] } } },
+    { type: "text", value: match[3] },
+    ...caption.children.slice(1),
+  ]
+  return `fig-${match[2].replaceAll(".", "-")}`
+}
+
 export default function remarkFigures() {
-  return (tree) =>
+  return (tree) => {
+    const usedIds = new Set()
     walk(tree, (node) => {
       if (node.type !== "paragraph") return
       const kids = node.children.filter((n) => !isBlank(n))
@@ -38,7 +53,13 @@ export default function remarkFigures() {
         if (theme) addProps(img, { className: [`figure-${theme}`] })
       }
 
-      node.data = { hName: "figure" }
-      node.children = [...images, ...(hasCaption ? [{ ...last, data: { hName: "figcaption" } }] : [])]
+      const caption = hasCaption ? { ...last, data: { hName: "figcaption" } } : undefined
+      const id = caption && labelCaption(caption)
+      const unique = id && !usedIds.has(id)
+      if (unique) usedIds.add(id)
+
+      node.data = { hName: "figure", hProperties: unique ? { id } : {} }
+      node.children = [...images, ...(caption ? [caption] : [])]
     })
+  }
 }

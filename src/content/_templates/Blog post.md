@@ -3,6 +3,7 @@ title: ""
 summary: ""
 date: {{date}}
 tags: []
+series:
 draft: true
 ---
 
