@@ -1,0 +1,66 @@
+---
+import type { MarkdownHeading } from "astro"
+
+type Props = {
+  headings: MarkdownHeading[]
+  // "rail" sits beside the article on wide screens; "panel" collapses above it on narrower ones.
+  mode: "rail" | "panel"
+}
+
+const { headings, mode } = Astro.props
+const items = headings.filter((heading) => heading.depth === 2 || heading.depth === 3)
+---
+
+{items.length > 1 && (mode === "rail" ? (
+  <nav class="toc-rail" aria-label="On this page" data-pagefind-ignore="all">
+    <p class="toc-title">On this page</p>
+    <ul class="toc-list">
+      {items.map((h) => <li class={`depth-${h.depth}`}><a href={`#${h.slug}`}>{h.text}</a></li>)}
+    </ul>
+  </nav>
+) : (
+  <details class="mobile-panel toc-panel" data-pagefind-ignore="all">
+    <summary>On this page</summary>
+    <ul class="toc-list">
+      {items.map((h) => <li class={`depth-${h.depth}`}><a href={`#${h.slug}`}>{h.text}</a></li>)}
+    </ul>
+  </details>
+))}
+
+<script>
+  const links = [...document.querySelectorAll<HTMLAnchorElement>(".toc-list a")]
+  const rail = document.querySelector<HTMLElement>(".toc-rail")
+  const headings = [...new Set(links.map((link) => link.hash))].flatMap((hash) => document.getElementById(decodeURIComponent(hash.slice(1))) ?? [])
+
+  // A heading counts as the current section once it has reached just under the fixed header.
+  const READ_LINE = 120
+  let queued = false
+
+  function markCurrent() {
+    queued = false
+    const current = headings.findLast((heading) => heading.getBoundingClientRect().top <= READ_LINE)
+    for (const link of links) {
+      if (current && decodeURIComponent(link.hash.slice(1)) === current.id) link.setAttribute("aria-current", "location")
+      else link.removeAttribute("aria-current")
+    }
+    // Long contents lists scroll inside the rail, so keep the current entry in view.
+    const active = rail?.querySelector<HTMLElement>("[aria-current]")
+    if (rail && active && rail.scrollHeight > rail.clientHeight) {
+      const box = active.getBoundingClientRect()
+      const frame = rail.getBoundingClientRect()
+      if (box.top < frame.top || box.bottom > frame.bottom) rail.scrollTop += box.top - frame.top - frame.height / 2
+    }
+  }
+
+  function queue() {
+    if (queued) return
+    queued = true
+    requestAnimationFrame(markCurrent)
+  }
+
+  if (headings.length) {
+    addEventListener("scroll", queue, { passive: true })
+    addEventListener("resize", queue)
+    markCurrent()
+  }
+</script>

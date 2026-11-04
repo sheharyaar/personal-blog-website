@@ -1,10 +1,6 @@
 ---
 import { type CollectionEntry, getCollection } from "astro:content"
-import PageLayout from "@layouts/PageLayout.astro"
-import TopLayout from "@layouts/TopLayout.astro"
-import BottomLayout from "@layouts/BottomLayout.astro"
-import ArticleTopLayout from "@layouts/ArticleTopLayout.astro"
-import ArticleBottomLayout from "@layouts/ArticleBottomLayout.astro"
+import ArticleLayout from "@layouts/ArticleLayout.astro"
 
 // Create the static projects pages
 export async function getStaticPaths() {
@@ -16,23 +12,7 @@ export async function getStaticPaths() {
 	}))
 }
 
-// Get the requested project
 type Props = CollectionEntry<"projects">
-const project = Astro.props
-const { title, summary } = project.data
 ---
 
-<PageLayout title={title} description={summary}>
-  <div data-pagefind-body data-pagefind-filter="section:Projects">
-  <TopLayout>
-    <div class="animate">
-      <ArticleTopLayout entry={project} />
-    </div>
-  </TopLayout>
-  <BottomLayout>
-    <div class="animate">
-      <ArticleBottomLayout entry={project} />
-    </div>
-  </BottomLayout>
-  </div>
-</PageLayout>
+<ArticleLayout entry={Astro.props} />

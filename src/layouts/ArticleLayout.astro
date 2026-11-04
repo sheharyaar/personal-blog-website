@@ -1,0 +1,125 @@
+---
+import { type CollectionEntry, getCollection, render } from "astro:content"
+import PageLayout from "@layouts/PageLayout.astro"
+import Pinstripe from "@components/Pinstripe.astro"
+import PostComments from "@components/PostComments.astro"
+import ReadingProgress from "@components/ReadingProgress.astro"
+import Toc from "@components/Toc.astro"
+import { tagHref } from "@lib/content"
+import { formatDate, readingTime } from "@lib/utils"
+
+type Props = {
+  entry: CollectionEntry<"blog"> | CollectionEntry<"projects">
+}
+
+const { entry } = Astro.props
+const { collection, data, body } = entry
+const { title, summary, date, tags } = data
+const updated = collection === "blog" ? data.updated : undefined
+const section = collection === "blog" ? "Blog" : "Projects"
+
+const links =
+  collection === "projects"
+    ? [
+        { label: "See Demo", url: data.demoUrl, icon: "globe" },
+        { label: "See Repository", url: data.repoUrl, icon: "link" },
+        { label: "See Blog", url: data.blogUrl, icon: "link" },
+      ].filter((link) => link.url)
+    : []
+
+const { Content, headings } = await render(entry)
+
+// Next and previous entries, wrapping around at the ends.
+const items = (await getCollection(collection))
+  .filter((item) => !item.data.draft)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+const index = items.findIndex((item) => item.id === entry.id)
+const prev = items[(index - 1 + items.length) % items.length]
+const next = items[(index + 1) % items.length]
+---
+
+<PageLayout title={title} description={summary}>
+  <div class="article-frame">
+    <div class="article-center" data-pagefind-body data-pagefind-filter={`section:${section}`}>
+      <div class="article-crumbs animate" data-pagefind-ignore="all">
+        <a href={`/${collection}/`} class="group w-fit p-1.5 gap-1.5 text-sm flex items-center border rounded hover:bg-black/5 hover:dark:bg-white/10 border-black/15 dark:border-white/20 transition-colors duration-300 ease-in-out">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="stroke-current group-hover:stroke-black group-hover:dark:stroke-white">
+            <line x1="19" y1="12" x2="5" y2="12" class="scale-x-0 group-hover:scale-x-100 translate-x-3 group-hover:translate-x-0 transition-all duration-300 ease-in-out" />
+            <polyline points="12 19 5 12 12 5" class="translate-x-1 group-hover:translate-x-0 transition-all duration-300 ease-in-out" />
+          </svg>
+          <div class="w-full group-hover:text-black group-hover:dark:text-white transition-colors duration-300 ease-in-out">
+            Back to {collection}
+          </div>
+        </a>
+        {tags.length > 0 && (
+          <ul class="tag-list">
+            {tags.map((tag) => <li><a href={tagHref(tag)}>#{tag}</a></li>)}
+          </ul>
+        )}
+      </div>
+
+      <header class="article-header animate">
+        <p class="article-meta">
+          <time datetime={date.toISOString()}>{formatDate(date)}</time>
+          {updated && <span>Updated <time datetime={updated.toISOString()}>{formatDate(updated)}</time></span>}
+          <span>{readingTime(body ?? "")}</span>
+        </p>
+        <h1 class="font-display text-4xl md:text-5xl font-bold leading-tight tracking-tight text-black dark:text-white mt-3">
+          {title}
+        </h1>
+        <p class="mt-3 text-lg">{summary}</p>
+        {links.length > 0 && (
+          <div class="mt-4 flex flex-wrap gap-2">
+            {links.map((link) => (
+              <a href={link.url} target="_blank" class="group flex gap-2 items-center px-3 py-1.5 truncate rounded text-xs md:text-sm lg:text-base border border-black/25 dark:border-white/25 hover:bg-black/5 hover:dark:bg-white/15 blend">
+                <svg class="size-4">
+                  <use href={`/ui.svg#${link.icon}`} class="fill-current group-hover:fill-black group-hover:dark:fill-white blend" />
+                </svg>
+                <span class="text-current group-hover:text-black group-hover:dark:text-white blend">{link.label}</span>
+              </a>
+            ))}
+          </div>
+        )}
+        <Pinstripe class="mt-10" />
+      </header>
+
+      <div class="animate">
+        <Toc headings={headings} mode="panel" />
+        <article>
+          <Content />
+        </article>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-12" data-pagefind-ignore="all">
+          <a href={`/${prev.collection}/${prev.id}`} class="group p-4 gap-3 flex items-center border rounded-lg hover:bg-black/5 hover:dark:bg-white/10 border-black/15 dark:border-white/20 blend">
+            <div class="order-2 w-full h-full group-hover:text-black group-hover:dark:text-white blend">
+              <div class="text-sm uppercase">Prev</div>
+              <div class="font-semibold mt-3 text-black dark:text-white">{prev.data.title}</div>
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="order-1 stroke-current group-hover:stroke-black group-hover:dark:stroke-white rotate-180">
+              <line x1="5" y1="12" x2="19" y2="12" class="scale-x-0 group-hover:scale-x-100 translate-x-4 group-hover:translate-x-1 transition-all duration-300 ease-in-out" />
+              <polyline points="12 5 19 12 12 19" class="translate-x-0 group-hover:translate-x-1 transition-all duration-300 ease-in-out" />
+            </svg>
+          </a>
+          <a href={`/${next.collection}/${next.id}`} class="group p-4 gap-3 flex items-center border rounded-lg hover:bg-black/5 hover:dark:bg-white/10 border-black/15 dark:border-white/20 transition-colors duration-300 ease-in-out">
+            <div class="w-full h-full text-right group-hover:text-black group-hover:dark:text-white blend">
+              <div class="text-sm uppercase">Next</div>
+              <div class="font-semibold mt-3 text-black dark:text-white">{next.data.title}</div>
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="stroke-current group-hover:stroke-black group-hover:dark:stroke-white">
+              <line x1="5" y1="12" x2="19" y2="12" class="scale-x-0 group-hover:scale-x-100 translate-x-4 group-hover:translate-x-1 transition-all duration-300 ease-in-out" />
+              <polyline points="12 5 19 12 12 19" class="translate-x-0 group-hover:translate-x-1 transition-all duration-300 ease-in-out" />
+            </svg>
+          </a>
+        </div>
+
+        <div data-pagefind-ignore="all"><PostComments /></div>
+      </div>
+    </div>
+
+    <div class="article-side">
+      <Toc headings={headings} mode="rail" />
+    </div>
+  </div>
+
+  <ReadingProgress />
+</PageLayout>

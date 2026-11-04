@@ -2,6 +2,8 @@
 import type { MarkdownHeading } from "astro"
 import PageLayout from "@layouts/PageLayout.astro"
 import NotesTree from "@components/NotesTree.astro"
+import ReadingProgress from "@components/ReadingProgress.astro"
+import Toc from "@components/Toc.astro"
 import { formatDate, readingTime } from "@lib/utils"
 import { type Note, type Notebook, tagHref } from "@lib/content"
 
@@ -18,7 +20,6 @@ const isRoot = entry.id === "index"
 const book = isRoot ? undefined : notebooks.find((b) => b.id === entry.id.split("/")[0])
 const isLanding = !!book && book.id === entry.id
 
-const toc = headings.filter((h) => h.depth === 2 || h.depth === 3)
 const position = flat.findIndex((n) => n.entry.id === entry.id)
 const prev = position > 0 ? flat[position - 1] : undefined
 const next = isRoot ? flat[0] : flat[position + 1]
@@ -32,7 +33,7 @@ const lastChange = updated ?? date
     </aside>
 
     <div class="notes-main" data-pagefind-body data-pagefind-filter="section:Notes">
-      <details class="notes-mobile-panel notes-mobile-tree" data-pagefind-ignore="all">
+      <details class="mobile-panel notes-mobile-tree" data-pagefind-ignore="all">
         <summary>Contents</summary>
         <NotesTree notebooks={notebooks} current={entry.id} />
       </details>
@@ -51,14 +52,7 @@ const lastChange = updated ?? date
         {summary && <p class="notes-summary">{summary}</p>}
       </div>
 
-      {toc.length > 1 && (
-        <details class="notes-mobile-panel notes-mobile-toc" data-pagefind-ignore="all">
-          <summary>On this page</summary>
-          <ul class="notes-toc-list">
-            {toc.map((h) => <li class={`depth-${h.depth}`}><a href={`#${h.slug}`}>{h.text}</a></li>)}
-          </ul>
-        </details>
-      )}
+      <Toc headings={headings} mode="panel" />
 
       <article>
         <slot />
@@ -90,13 +84,8 @@ const lastChange = updated ?? date
       </nav>
     </div>
 
-    {toc.length > 1 && (
-      <nav class="notes-toc" aria-label="On this page">
-        <p class="eyebrow">On this page</p>
-        <ul class="notes-toc-list">
-          {toc.map((h) => <li class={`depth-${h.depth}`}><a href={`#${h.slug}`}>{h.text}</a></li>)}
-        </ul>
-      </nav>
-    )}
+    <Toc headings={headings} mode="rail" />
   </div>
+
+  <ReadingProgress />
 </PageLayout>

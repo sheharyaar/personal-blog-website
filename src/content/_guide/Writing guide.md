@@ -59,7 +59,7 @@ Paste or drag an image in: it is saved next to the note. Then:
 ## Math, code, footnotes, links
 
 - Math: `$inline$` and `$$ display $$` (rendered with KaTeX).
-- Code: fenced blocks with a language: ` ```c `.
+- Code: fenced blocks with a language: ` ```c `. Add options after the language: ` ```c title="main.c" {2,4-6} ` gives the block a file title and highlights those lines. `ins={3}` and `del={4}` mark lines as added or removed, and `wrap` wraps long lines. Every block gets a copy button.
 - Footnotes: `text[^1]` and `[^1]: the note` at the bottom.
 - Links to other notes: drag the note in or use Obsidian's link picker. The `.md` links are turned into site URLs automatically.
 - Tags: add them in the `tags` property. Each tag gets a page at `/tags/<tag>/`.
