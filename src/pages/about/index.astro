@@ -1,0 +1,76 @@
+---
+import { getCollection, render } from "astro:content"
+import PageLayout from "@layouts/PageLayout.astro"
+import TopLayout from "@layouts/TopLayout.astro"
+import BottomLayout from "@layouts/BottomLayout.astro"
+import { Content as AboutText } from "@content/about.md"
+import { ABOUT, SITE, SOCIALS } from "@consts"
+
+const entries = (await getCollection("work")).sort((a, b) => b.data.dateStart.getTime() - a.data.dateStart.getTime())
+
+const work = await Promise.all(
+  entries.map(async (entry) => {
+    const { Content } = await render(entry)
+    return { ...entry, Content }
+  }),
+)
+
+// dateEnd can be free text, e.g. "Present".
+function formatWorkDate(input: Date | string) {
+  if (typeof input === "string") return input
+  return input.toLocaleDateString("en-US", { month: "short", year: "numeric" })
+}
+---
+
+<PageLayout title={ABOUT.TITLE} description={ABOUT.DESCRIPTION}>
+  <div data-pagefind-body data-pagefind-filter="section:About">
+    <TopLayout>
+      <h1 class="animate page-heading">{ABOUT.TITLE}</h1>
+    </TopLayout>
+    <BottomLayout>
+      <section class="animate">
+        <div class="flex items-center gap-5 mb-8">
+          <img src="/brand.png" alt="Portrait of Sheharyaar" width="72" height="72" class="size-18 shrink-0 rounded-full object-cover bg-black/5 dark:bg-white/5 ring-1 ring-gold-soft ring-offset-4 ring-offset-white dark:ring-offset-black" />
+          <p class="section-title">{SITE.AUTHOR}</p>
+        </div>
+        <article>
+          <AboutText />
+        </article>
+      </section>
+
+      <section id="work" class="animate about-section">
+        <h2 class="section-title">Work</h2>
+        <ol class="timeline">
+          {
+            work.map((entry) => (
+              <li>
+                <p class="timeline-date">
+                  {formatWorkDate(entry.data.dateStart)} – {formatWorkDate(entry.data.dateEnd)}
+                </p>
+                <h3 class="timeline-company">{entry.data.company}</h3>
+                <p class="timeline-role">{entry.data.role}</p>
+                <article class="prose dark:prose-invert">
+                  <entry.Content />
+                </article>
+              </li>
+            ))
+          }
+        </ol>
+      </section>
+
+      <section class="animate about-section" data-pagefind-ignore="all">
+        <h2 class="section-title">Contact</h2>
+        <dl class="about-contact">
+          {
+            SOCIALS.map((social) => (
+              <>
+                <dt>{social.NAME}</dt>
+                <dd><a href={social.HREF} target="_blank">{social.TEXT}</a></dd>
+              </>
+            ))
+          }
+        </dl>
+      </section>
+    </BottomLayout>
+  </div>
+</PageLayout>

@@ -59,4 +59,18 @@ const notes = defineCollection({
   }),
 })
 
-export const collections = { work, blog, projects, notes }
+// One file per book; the text under the properties is an optional short note.
+// Everything here is public, so no shelf locations or reading plans.
+const library = defineCollection({
+  loader: entries("library"),
+  schema: z.object({
+    title: z.string(),
+    author: z.string(),
+    subject: z.string(),
+    // Left empty in Obsidian, this comes through as null and nothing is shown.
+    status: z.enum(["read", "reading", "unread"]).nullish(),
+    draft: z.boolean().optional(),
+  }),
+})
+
+export const collections = { work, blog, projects, notes, library }

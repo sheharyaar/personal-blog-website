@@ -2,7 +2,7 @@
 company: "Linux Foundation Mentorship"
 role: "Linux Kernel Bug Fixing Spring"
 dateStart: "03/01/2024"
-dateEnd: "31/05/2024"
+dateEnd: "05/31/2024"
 ---
 
 *Perform static and dynamic analysis; fix and patch bugs upstream into the Kernel*

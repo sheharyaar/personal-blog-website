@@ -316,6 +316,12 @@
   transform: translateY(0);
 }
 
+/* Arriving at an anchor: fade only, or the slide shifts where the browser scrolls to. */
+html:has(:target) .animate {
+  transform: none;
+  transition: opacity 1s ease;
+}
+
 .dark .hero-ink {
   text-shadow: 0 2px 30px rgb(0 0 0 / 0.75);
 }
@@ -621,7 +627,8 @@ html:not(.dark) .figure-dark,
 /* Tags and archive lists                                             */
 /* ------------------------------------------------------------------ */
 .tag-list { display: flex; flex-wrap: wrap; gap: 0.4rem; list-style: none; margin: 0; padding: 0; }
-.tag-list a {
+.tag-list a,
+.tag-list button {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
@@ -634,6 +641,7 @@ html:not(.dark) .figure-dark,
   transition: border-color 0.2s ease, color 0.2s ease;
 }
 .tag-list a:hover,
+.tag-list button:hover,
 .tag-list a.active { border-color: var(--gold-soft); color: var(--fg); }
 .tag-count { font-family: var(--font-mono); font-size: 0.7rem; color: var(--fg-muted); }
 
@@ -662,6 +670,170 @@ html:not(.dark) .figure-dark,
 .archive-list p { margin-top: 0.15rem; font-size: 0.9rem; }
 .archive-tags { display: flex; flex-wrap: wrap; gap: 0.7rem; list-style: none; margin: 0.35rem 0 0; padding: 0; }
 .archive-tags a { font-weight: 400; font-size: 0.75rem; color: var(--fg-muted); }
+
+/* ------------------------------------------------------------------ */
+/* Library                                                            */
+/* ------------------------------------------------------------------ */
+/* Wider screens get the stacks and phones get the filter chips, never both.
+   One stack per subject: its covers fan out further on hover, focus or tap. */
+html:has(.stacks) { scroll-behavior: smooth; }
+.stacks { display: none; }
+@media (min-width: 640px) {
+  .stacks { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0.4rem; margin-bottom: 0.5rem; padding-block: 0.25rem; }
+  .library-filter { display: none; }
+}
+@media (min-width: 1024px) {
+  .stacks { grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); grid-template-columns: none; }
+}
+.stack { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; padding: 0.6rem 0.1rem 0.5rem; border: 1px solid var(--rule); border-radius: 6px; text-align: center; text-decoration: none; transition: border-color 0.2s ease, background-color 0.2s ease; }
+.stack:hover,
+.stack:focus-visible { border-color: var(--gold-soft); background: color-mix(in srgb, var(--gold-soft) 8%, transparent); }
+.stack:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.stack-fan { --open: 0; position: relative; display: block; flex: none; width: 100%; height: 4.1rem; margin-bottom: 0.35rem; }
+.stack:hover .stack-fan,
+.stack:focus-visible .stack-fan,
+.stack:active .stack-fan { --open: 1; }
+.stack-fan img {
+  --x: 0;
+  --turn: 0deg;
+  --lift: 0rem;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 2.35rem;
+  height: auto;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.45);
+  transform-origin: 50% 100%;
+  transform: translate(calc(-50% + var(--x) * (0.65rem + 0.22rem * var(--open))), calc(var(--lift) * (-1 - var(--open)))) rotate(calc(var(--turn) * (1 + 0.55 * var(--open))));
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.stack-fan img:nth-child(1) { --x: -1; --turn: -9deg; }
+.stack-fan img:nth-child(2) { --lift: 0.2rem; z-index: 1; }
+.stack-fan img:nth-child(3) { --x: 1; --turn: 9deg; }
+/* A subject with two books fans them as a pair. */
+.stack-fan img:first-child:nth-last-child(2) { --x: -0.6; --turn: -7deg; }
+.stack-fan img:nth-child(2):last-child { --x: 0.6; --turn: 7deg; --lift: 0rem; }
+.stack-fan img:only-child { --x: 0; --turn: 0deg; }
+.stack-name { font-size: 0.68rem; line-height: 1.2; color: var(--fg); }
+.stack .tag-count { margin-top: auto; padding-top: 0.2rem; }
+@media (prefers-reduced-motion: reduce) {
+  html:has(.stacks) { scroll-behavior: auto; }
+  .stack-fan img { transition: none; }
+}
+
+.library-filter button { cursor: pointer; }
+.library-filter button[aria-pressed="true"] { border-color: var(--gold); background: var(--gold); color: var(--color-white); }
+.dark .library-filter button[aria-pressed="true"] { color: var(--color-black); }
+.library-filter button[aria-pressed="true"] .tag-count { color: inherit; }
+/* Phones: one scrolling row, so the filter doesn't push the covers down. */
+@media (max-width: 639px) {
+  .library-filter { flex-wrap: nowrap; margin-inline: -1.25rem; padding-inline: 1.25rem; overflow-x: auto; scrollbar-width: none; }
+  .library-filter li { flex: none; }
+  .library-filter button { white-space: nowrap; }
+}
+
+/* Each book spans two shared rows: covers keep their proportions and stand on the bottom of the
+   first, like books on a shelf, and every caption in a row starts at the same height in the second. */
+.book-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 0.75rem; list-style: none; margin: 0; padding: 0; }
+.book-grid > li,
+.book { display: grid; grid-row: span 2; grid-template-rows: subgrid; }
+.book { width: 100%; padding: 0; border-radius: 2px; text-align: left; cursor: pointer; }
+.book:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+.book-cover { position: relative; display: block; align-self: end; transition: transform 0.2s ease; }
+.book:hover .book-cover { transform: translateY(-3px); }
+.book-cover img { display: block; width: 100%; height: auto; border-radius: 2px; background: var(--rule); box-shadow: 0 1px 4px rgb(0 0 0 / 0.35); }
+.book-caption { display: block; padding: 0.55rem 0 1.25rem; }
+.book-caption-title,
+.book-caption-author { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; overflow-wrap: break-word; line-height: 1.25; }
+.book-caption-title { -webkit-line-clamp: 3; font-size: 0.8rem; font-weight: 700; color: var(--fg); }
+.book-caption-author { -webkit-line-clamp: 2; margin-top: 0.15rem; font-size: 0.72rem; color: var(--fg-muted); }
+/* The captions already leave room below each row, so subjects need less of a gap than the blog's years. */
+.library-shelves { margin-top: 1.25rem; }
+.library-subject { margin-top: 0.75rem; scroll-margin-top: 5.5rem; }
+.library-subject > h2 { margin-bottom: 1rem; font-size: 1.35rem; }
+/* Phones: each subject is one row to swipe through, unless the filter is showing just that subject. */
+@media (max-width: 639px) {
+  .library-shelves:not([data-filtered]) .book-grid {
+    grid-template-columns: none;
+    grid-template-rows: auto auto;
+    grid-auto-flow: column;
+    grid-auto-columns: 6.75rem;
+    margin-inline: -1.25rem;
+    padding: 0.25rem 1.25rem 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+}
+/* Wider screens: small subjects share a row instead of leaving most of it empty. Everything uses the
+   page's columns and rows, so covers and captions stay level across neighbouring subjects too. */
+@media (min-width: 640px) {
+  .library-shelves { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-auto-flow: row dense; column-gap: 1rem; }
+  .library-subject { --cols: var(--cols-6); --rows: var(--rows-6); display: grid; grid-column: span var(--cols); grid-row: span var(--rows); grid-template-columns: subgrid; grid-template-rows: subgrid; }
+  .library-subject > h2 { grid-column: 1 / -1; }
+  .book-grid { grid-column: 1 / -1; grid-row: 2 / -1; grid-template-columns: subgrid; grid-template-rows: subgrid; column-gap: inherit; }
+}
+@media (min-width: 1024px) {
+  .library-shelves { grid-template-columns: repeat(8, minmax(0, 1fr)); }
+  .library-subject { --cols: var(--cols-8); --rows: var(--rows-8); }
+}
+.book-plain { display: flex; flex-direction: column; justify-content: space-between; gap: 0.25rem; aspect-ratio: 2 / 3; padding: 0.5rem; overflow: hidden; border: 1px solid var(--gold-soft); border-radius: 2px; text-align: left; }
+.book-plain-title { font-family: var(--font-display); font-size: 0.9rem; font-weight: 700; line-height: 1.1; color: var(--fg); }
+.book-plain-author { font-size: 0.6rem; line-height: 1.2; color: var(--fg-muted); }
+/* These two sit on top of cover art, so their colours don't follow the theme. */
+.book-badge { position: absolute; left: 0.25rem; bottom: 0.25rem; padding: 0 0.3rem; border-radius: 2px; background: #0b0b0c; font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.06em; text-transform: uppercase; color: #c9a24a; }
+.book-note-dot { position: absolute; top: 0.3rem; right: 0.3rem; width: 0.55rem; height: 0.55rem; border-radius: 50%; background: #c9a24a; box-shadow: 0 0 0 2px #0b0b0c; }
+
+.book-card { position: fixed; inset: 0; width: min(30rem, calc(100vw - 2rem)); height: fit-content; max-height: calc(100dvh - 3rem); margin: auto; padding: 1.25rem; overflow-y: auto; border: 1px solid var(--gold-soft); border-radius: 6px; background: var(--color-white); color: var(--fg-body); }
+.dark .book-card { background: #161618; }
+.book-card:popover-open { display: flex; gap: 1.25rem; }
+.book-card::backdrop { background: rgb(0 0 0 / 0.65); }
+.book-card-cover { flex: none; width: 6.5rem; height: auto; align-self: flex-start; border-radius: 2px; }
+.book-card-body { flex: 1; min-width: 0; }
+.book-card h3 { padding-right: 1.5rem; font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; line-height: 1.1; color: var(--fg); }
+.book-card-author { margin-top: 0.4rem; font-size: 0.9rem; }
+.book-card-meta { margin-top: 0.4rem; font-family: var(--font-mono); font-size: 0.75rem; color: var(--gold); }
+.book-card-note { margin-top: 0.75rem; font-size: 0.95rem; }
+.book-card-note > :first-child { margin-top: 0; }
+.book-card-note > :last-child { margin-bottom: 0; }
+.book-card-close { position: absolute; top: 0.5rem; right: 0.75rem; font-size: 1.5rem; line-height: 1; color: var(--fg-muted); cursor: pointer; }
+.book-card-close:hover { color: var(--fg); }
+
+.library-credit { margin-top: 2rem; font-size: 0.75rem; color: var(--fg-muted); }
+.library-credit a { text-decoration: underline; text-decoration-color: var(--gold-soft); text-underline-offset: 3px; }
+
+/* ------------------------------------------------------------------ */
+/* About: work timeline and contact                                   */
+/* ------------------------------------------------------------------ */
+.about-section { margin-top: 3.5rem; scroll-margin-top: 5.5rem; }
+.timeline { list-style: none; margin: 1.75rem 0 0; padding: 0; }
+.timeline > li {
+  position: relative;
+  padding: 0 0 2.5rem 1.5rem;
+  border-left: 1px solid var(--rule);
+}
+.timeline > li:last-child { padding-bottom: 0; border-left-color: transparent; }
+.timeline > li::before {
+  content: "";
+  position: absolute;
+  top: 0.3rem;
+  left: -0.27rem;
+  width: 0.5rem;
+  height: 0.5rem;
+  background: var(--gold);
+  transform: rotate(45deg);
+}
+.timeline-date { font-family: var(--font-mono); font-size: 0.8rem; color: var(--gold); }
+.timeline-company { margin-top: 0.5rem; font-weight: 700; color: var(--fg); }
+.timeline-role { font-size: 0.9rem; color: var(--fg-muted); }
+.timeline article { margin-top: 0.75rem; }
+.timeline article > :first-child { margin-top: 0; }
+.timeline article > :last-child { margin-bottom: 0; }
+.about-contact { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 0.5rem 1.5rem; margin-top: 1.25rem; }
+.about-contact dd { min-width: 0; overflow-wrap: anywhere; }
+.about-contact a { color: var(--fg); text-decoration: underline; text-decoration-color: var(--gold-soft); text-underline-offset: 3px; }
 
 /* ------------------------------------------------------------------ */
 /* Notes: notebook tree | note | on this page                         */

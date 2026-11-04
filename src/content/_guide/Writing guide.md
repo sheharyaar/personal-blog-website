@@ -12,10 +12,25 @@ This folder is not published. It's a cheat sheet for writing on the site from Ob
 | Notebook | `notes/<notebook>/index.md` | `/notes/<notebook>/` |
 | Chapter | `notes/<notebook>/<NN-chapter>.md` (`00-`, `01-`… sets the order) | `/notes/<notebook>/<NN-chapter>/` |
 | Project | `projects/<name>/index.md` | `/projects/<name>/` |
+| Book | `library/<book-name>.md` | listed on `/library/` |
+| Job | `work/<name>.md` | timeline on `/about/` |
+| About text | `about.md` | `/about/` and the home page |
 
 New post: create the folder, create a note called `index` inside it, then run **Templates: Insert template → Blog post** from the command palette (Ctrl+P). The title, summary, date and tags appear as Properties at the top. Fill them in there.
 
 Files and folders starting with `_` are never published.
+
+## Library
+
+Each book is one note in `library/`. To add a book, create a note there and insert the **Book** template.
+
+- `status`: `read`, `reading` or `unread`, in lowercase. Leave it empty to show no status. Anything else stops the build, so typos get caught.
+- `subject`: the group the book appears under. A new value creates a new group and filter.
+- A short note: write it below the properties. It shows when someone clicks the cover, and a gold dot on the cover marks books that have one.
+- Cover: put an image in `library/covers/` with the same name as the note (`deep-work.jpg` for `deep-work.md`). About 400px wide is plenty. Without one, the book shows a plain tile with its title.
+- To hide a book, add `draft: true` or delete its note.
+
+Everything in these notes is public, so keep shelf locations and reading plans out of them.
 
 ## Callouts
 

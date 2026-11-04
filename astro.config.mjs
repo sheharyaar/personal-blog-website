@@ -23,6 +23,8 @@ export default defineConfig({
     "/snippets/netfilter-madness/netfilter-madness": "/notes/cheatsheets/netfilter-madness/",
     "/snippets/network-namespace/network-ns": "/notes/cheatsheets/network-namespace/",
     "/snippets/qemu/qemu": "/notes/cheatsheets/qemu/",
+    // Work became the timeline on About.
+    "/work": "/about/#work",
   },
   // Astro 7 defaults to JSX whitespace rules; keep the HTML-aware behaviour the templates were written for.
   compressHTML: true,

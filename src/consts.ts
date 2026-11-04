@@ -8,10 +8,16 @@ export const SITE: Site = {
   AUTHOR: "Mohammad Shehar Yaar Tausif",
 };
 
-// Work Page
-export const WORK: Page = {
-  TITLE: "Work",
-  DESCRIPTION: "Places I have worked.",
+// About Page
+export const ABOUT: Page = {
+  TITLE: "About",
+  DESCRIPTION: "Who I am and the places I have worked.",
+};
+
+// Library Page
+export const LIBRARY: Page = {
+  TITLE: "Library",
+  DESCRIPTION: "The books on my shelves.",
 };
 
 // Blog Page
@@ -29,7 +35,7 @@ export const PROJECTS: Page = {
 // Search Page
 export const SEARCH: Page = {
   TITLE: "Search",
-  DESCRIPTION: "Full-text search across every post, note and project.",
+  DESCRIPTION: "Full-text search across the whole site.",
 };
 
 // Tags Page
@@ -53,8 +59,12 @@ export const LINKS: Links = [
     HREF: "/projects",
   },
   {
-    TEXT: "Work",
-    HREF: "/work",
+    TEXT: "Library",
+    HREF: "/library",
+  },
+  {
+    TEXT: "About",
+    HREF: "/about",
   },
 ];
 
