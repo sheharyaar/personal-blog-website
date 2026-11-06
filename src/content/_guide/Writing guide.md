@@ -11,7 +11,7 @@ This folder is not published. It's a cheat sheet for writing on the site from Ob
 | Blog post | `blog/<post-name>/index.md` (+ its images in the same folder) | `/blog/<post-name>/` |
 | Notebook | `notes/<notebook>/index.md` | `/notes/<notebook>/` |
 | Chapter | `notes/<notebook>/<NN-chapter>.md` (`00-`, `01-`… sets the order) | `/notes/<notebook>/<NN-chapter>/` |
-| Project | `projects/<name>/index.md` | `/projects/<name>/` |
+| Project | `projects/<name>/index.md` | a row on `/projects/` |
 | Book | `library/<book-name>.md` | listed on `/library/` |
 | Job | `work/<name>.md` | timeline on `/about/` |
 | About text | `about.md` | `/about/` |
@@ -32,6 +32,13 @@ Each book is one note in `library/`. To add a book, create a note there and inse
 - To hide a book, add `draft: true` or delete its note.
 
 Everything in these notes is public, so keep shelf locations and reading plans out of them.
+
+## Projects
+
+A project is one row on `/projects/`, built from its properties. It has no page of its own, so anything written below the properties isn't published. If there's more to say, write a post and link it.
+
+- `summary`: the line under the title.
+- `blogUrl`, `notesUrl`, `demoUrl`, `repoUrl`: each one that's filled in shows as a link on the row. Use site paths for your own pages, like `/blog/my-post/`. The title goes to the first one set, in that order.
 
 ## Callouts
 

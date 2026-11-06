@@ -10,6 +10,26 @@ export const tagHref = (tag: string) => `/tags/${tagSlug(tag)}/`
 
 export const noteHref = (id: string) => (id === "index" ? "/notes/" : `/notes/${id}/`)
 
+/** A project has no page of its own: it is a row on /projects, linking to whichever of these it has. */
+export const projectLinks = ({ data }: CollectionEntry<"projects">) =>
+  [
+    { label: "Write-up", url: data.blogUrl },
+    { label: "Notes", url: data.notesUrl },
+    { label: "Demo", url: data.demoUrl },
+    { label: "Repository", url: data.repoUrl },
+  ].filter((link): link is { label: string; url: string } => Boolean(link.url))
+
+/** Where a project's title goes: its first link, or its row if it has none. */
+export const projectHref = (project: CollectionEntry<"projects">) =>
+  projectLinks(project)[0]?.url ?? `/projects/#${project.id}`
+
+/** The tags on a set of entries and how often each is used, most used first. */
+export function countTags(entries: { data: { tags: string[] } }[]) {
+  const counts = new Map<string, number>()
+  for (const tag of entries.flatMap((entry) => entry.data.tags)) counts.set(tag, (counts.get(tag) ?? 0) + 1)
+  return [...counts].map(([tag, count]) => ({ tag, count })).sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag))
+}
+
 export type NotebookChapter = { entry: Note; href: string }
 export type Notebook = { id: string; entry: Note; href: string; chapters: NotebookChapter[] }
 

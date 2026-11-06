@@ -1,5 +1,5 @@
 import { getCollection } from "astro:content"
-import { getNotesTree, noteHref, tagSlug } from "@lib/content"
+import { getNotesTree, noteHref, projectHref, tagSlug } from "@lib/content"
 
 export type TaggedItem = { title: string; href: string; date?: Date; summary?: string; kind: "Posts" | "Notes" | "Projects" }
 
@@ -12,7 +12,7 @@ export async function getTagIndex() {
   const items: { tags: string[]; item: TaggedItem }[] = [
     ...posts.map((p) => ({ tags: p.data.tags, item: { kind: "Posts" as const, title: p.data.title, href: `/blog/${p.id}/`, date: p.data.date, summary: p.data.summary } })),
     ...notes.map((n) => ({ tags: n.data.tags ?? [], item: { kind: "Notes" as const, title: n.data.title, href: noteHref(n.id), date: n.data.updated ?? n.data.date, summary: n.data.summary } })),
-    ...projects.map((p) => ({ tags: p.data.tags, item: { kind: "Projects" as const, title: p.data.title, href: `/projects/${p.id}/`, date: p.data.date, summary: p.data.summary } })),
+    ...projects.map((p) => ({ tags: p.data.tags, item: { kind: "Projects" as const, title: p.data.title, href: projectHref(p), date: p.data.date, summary: p.data.summary } })),
   ]
 
   const index = new Map<string, { tag: string; items: TaggedItem[] }>()

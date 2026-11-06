@@ -13,8 +13,7 @@ wanted to understand its internals. So I took some time to explore the userspace
 technologies that make containers possible.
 
 I have written extensive notes on my finding and my implementations in my [notes collection](../notes/linux-containers). 
-The project page is available [here](../projects/container-runtime) and the implementation is 
-available at my github : [sheharyaar/container-runtime](https://github.com/sheharyaar/container-runtime).
+The implementation is available at my github : [sheharyaar/container-runtime](https://github.com/sheharyaar/container-runtime).
 
 This blog is about my experience and the things I found interesting. So buckle up!
 

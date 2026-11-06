@@ -8,7 +8,7 @@ tags:
 - Linux
 - ELF
 repoUrl: https://github.com/sheharyaar/sherlock
-blogUrl: ../blog/writing-a-debugger-00
+blogUrl: /blog/writing-a-debugger-00/
 ---
 
 ![sherlock debugger](image.png)

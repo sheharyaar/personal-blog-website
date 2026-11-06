@@ -4,6 +4,7 @@
 //   src/content/blog/<slug>/index.md -> /blog/<slug>/
 //   src/content/notes/<book>/<ch>.md -> /notes/<book>/<ch>/
 //   src/content/notes/<book>/index.md -> /notes/<book>/
+//   src/content/projects/<name>/index.md -> /projects/#<name>
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 
@@ -26,7 +27,8 @@ export function contentUrl(absPath) {
   const [collection, ...rest] = rel.replace(/\.(md|mdx)$/, "").split("/")
   let id = rest.join("/").replace(/(^|\/)index$/, "")
   if (collection === "notes" && id === "") return "/notes/"
-  if (!["blog", "notes", "projects"].includes(collection)) return undefined
+  if (collection === "projects") return `/projects/#${id}`
+  if (!["blog", "notes"].includes(collection)) return undefined
   return `/${collection}/${id}/`
 }
 

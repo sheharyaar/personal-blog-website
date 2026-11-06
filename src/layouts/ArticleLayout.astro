@@ -9,23 +9,12 @@ import { tagHref } from "@lib/content"
 import { formatDate, readingTime } from "@lib/utils"
 
 type Props = {
-  entry: CollectionEntry<"blog"> | CollectionEntry<"projects">
+  entry: CollectionEntry<"blog">
 }
 
 const { entry } = Astro.props
 const { collection, data, body } = entry
-const { title, summary, date, tags } = data
-const updated = collection === "blog" ? data.updated : undefined
-const section = collection === "blog" ? "Blog" : "Projects"
-
-const links =
-  collection === "projects"
-    ? [
-        { label: "See Demo", url: data.demoUrl, icon: "globe" },
-        { label: "See Repository", url: data.repoUrl, icon: "link" },
-        { label: "See Blog", url: data.blogUrl, icon: "link" },
-      ].filter((link) => link.url)
-    : []
+const { title, summary, date, updated, tags, series } = data
 
 const { Content, headings } = await render(entry)
 
@@ -37,7 +26,6 @@ const index = items.findIndex((item) => item.id === entry.id)
 
 // Posts in a series link to each other in date order. Outside a series, or past either end of one,
 // the link goes to the nearest post that isn't in the series.
-const series = collection === "blog" ? data.series : undefined
 const seriesPosts = series
   ? (await getCollection("blog"))
       .filter((post) => !post.data.draft && post.data.series === series)
@@ -59,7 +47,7 @@ const next = (part >= 0 && seriesPosts[part + 1]) || nearestOutsideSeries(1)
 
 <PageLayout title={title} description={summary}>
   <div class="article-frame">
-    <div class="article-center" data-pagefind-body data-pagefind-filter={`section:${section}`}>
+    <div class="article-center" data-pagefind-body data-pagefind-filter="section:Blog">
       <div class="article-crumbs animate" data-pagefind-ignore="all">
         <a href={`/${collection}/`} class="group w-fit p-1.5 gap-1.5 text-sm flex items-center border rounded hover:bg-black/5 hover:dark:bg-white/10 border-black/15 dark:border-white/20 transition-colors duration-300 ease-in-out">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="stroke-current group-hover:stroke-black group-hover:dark:stroke-white">
@@ -87,18 +75,6 @@ const next = (part >= 0 && seriesPosts[part + 1]) || nearestOutsideSeries(1)
           {title}
         </h1>
         <p class="mt-3 text-lg">{summary}</p>
-        {links.length > 0 && (
-          <div class="mt-4 flex flex-wrap gap-2">
-            {links.map((link) => (
-              <a href={link.url} target="_blank" class="group flex gap-2 items-center px-3 py-1.5 truncate rounded text-xs md:text-sm lg:text-base border border-black/25 dark:border-white/25 hover:bg-black/5 hover:dark:bg-white/15 blend">
-                <svg class="size-4">
-                  <use href={`/ui.svg#${link.icon}`} class="fill-current group-hover:fill-black group-hover:dark:fill-white blend" />
-                </svg>
-                <span class="text-current group-hover:text-black group-hover:dark:text-white blend">{link.label}</span>
-              </a>
-            ))}
-          </div>
-        )}
         <Pinstripe class="mt-10" />
       </header>
 

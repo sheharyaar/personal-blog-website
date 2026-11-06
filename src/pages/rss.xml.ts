@@ -22,7 +22,8 @@ export async function GET(context: Context) {
       title: item.data.title,
       description: item.data.summary,
       pubDate: item.data.date,
-      link: `/${item.collection}/${item.id}/`,
+      // Absolute, because rss() puts a trailing slash on relative links, even after a #fragment.
+      link: item.collection === "projects" ? new URL(`/projects/#${item.id}`, context.site).href : `/blog/${item.id}/`,
     })),
   })
 }

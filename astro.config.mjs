@@ -25,6 +25,11 @@ export default defineConfig({
     "/snippets/qemu/qemu": "/notes/cheatsheets/qemu/",
     // Work became the timeline on About.
     "/work": "/about/#work",
+    // Projects are now rows on /projects instead of pages of their own.
+    "/projects/container-runtime": "/projects/#container-runtime",
+    "/projects/dnslogger": "/projects/#dnslogger",
+    "/projects/smart-pact": "/projects/#smart-pact",
+    "/projects/writing-a-debugger": "/projects/#writing-a-debugger",
   },
   // Astro 7 defaults to JSX whitespace rules; keep the HTML-aware behaviour the templates were written for.
   compressHTML: true,

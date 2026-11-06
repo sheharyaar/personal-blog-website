@@ -679,8 +679,12 @@ html:not(.dark) .figure-dark,
 .archive-list a { font-weight: 700; color: var(--fg); text-decoration: none; }
 .archive-list a:hover { text-decoration: underline; text-decoration-color: var(--gold-soft); text-underline-offset: 3px; }
 .archive-list p { margin-top: 0.15rem; font-size: 0.9rem; }
-.archive-tags { display: flex; flex-wrap: wrap; gap: 0.7rem; list-style: none; margin: 0.35rem 0 0; padding: 0; }
+.archive-list h3 { scroll-margin-top: 5.5rem; }
+.archive-tags,
+.archive-links { display: flex; flex-wrap: wrap; gap: 0.7rem; list-style: none; margin: 0.35rem 0 0; padding: 0; }
 .archive-tags a { font-weight: 400; font-size: 0.75rem; color: var(--fg-muted); }
+.archive-links a { font-weight: 400; font-size: 0.8rem; text-decoration: underline; text-decoration-color: var(--gold-soft); text-underline-offset: 3px; }
+.archive-links a:hover { color: var(--gold); }
 
 /* ------------------------------------------------------------------ */
 /* Home                                                               */

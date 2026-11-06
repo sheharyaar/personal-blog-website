@@ -8,7 +8,8 @@ tags:
 - Linux
 - Containers
 repoUrl: https://github.com/sheharyaar/container-runtime
-blogUrl: ../blog/container-runtime
+blogUrl: /blog/container-runtime/
+notesUrl: /notes/linux-containers/
 ---
 
 ![container-runtime](./image.png)

@@ -5,7 +5,7 @@ import Gotham from "@components/Gotham.astro"
 import HomeSection from "@components/HomeSection.astro"
 import Pinstripe from "@components/Pinstripe.astro"
 import { Content as Intro } from "@content/intro.md"
-import { getNotesTree } from "@lib/content"
+import { getNotesTree, projectHref } from "@lib/content"
 import { formatDate, readingTime } from "@lib/utils"
 import { SITE, SOCIALS } from "@consts"
 
@@ -128,7 +128,7 @@ const projects = (await getCollection("projects"))
             <li>
               <time datetime={project.data.date.toISOString()}>{formatDate(project.data.date)}</time>
               <div>
-                <a href={`/projects/${project.id}/`}>{project.data.title}</a>
+                <a href={projectHref(project)}>{project.data.title}</a>
                 <p>{project.data.summary}</p>
               </div>
             </li>

@@ -3,22 +3,54 @@ import { getCollection } from "astro:content"
 import PageLayout from "@layouts/PageLayout.astro"
 import TopLayout from "@layouts/TopLayout.astro"
 import BottomLayout from "@layouts/BottomLayout.astro"
-import ArrowCard from "@components/ArrowCard.astro"
+import TagCloud from "@components/TagCloud.astro"
+import { formatMonthDay } from "@lib/utils"
+import { countTags, projectHref, projectLinks, tagHref } from "@lib/content"
 import { PROJECTS } from "@consts"
 
 const projects = (await getCollection("projects"))
   .filter((project) => !project.data.draft)
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+
+const years = Map.groupBy(projects, (project) => project.data.date.getFullYear())
 ---
 
 <PageLayout title={PROJECTS.TITLE} description={PROJECTS.DESCRIPTION}>
-  <TopLayout>
-    <div class="animate page-heading">{PROJECTS.TITLE}</div>
-    <p class="animate mt-6">{PROJECTS.DESCRIPTION}</p>
-  </TopLayout>
-  <BottomLayout>
-    <ul class="animate space-y-4">
-      {projects.map((project) => <li><ArrowCard entry={project} /></li>)}
-    </ul>
-  </BottomLayout>
+  <div data-pagefind-body data-pagefind-filter="section:Projects">
+    <TopLayout>
+      <h1 class="animate page-heading">{PROJECTS.TITLE}</h1>
+      <p class="animate mt-6">{PROJECTS.DESCRIPTION}</p>
+    </TopLayout>
+    <BottomLayout>
+      <div class="animate">
+        <div data-pagefind-ignore="all"><TagCloud tags={countTags(projects)} /></div>
+        {
+          [...years].map(([year, items]) => (
+            <section class="archive-year">
+              <h2>{year}</h2>
+              <ul class="archive-list">
+                {items.map((project) => (
+                  <li>
+                    <time datetime={project.data.date.toISOString()}>{formatMonthDay(project.data.date)}</time>
+                    <div>
+                      <h3 id={project.id}><a href={projectHref(project)}>{project.data.title}</a></h3>
+                      <p>{project.data.summary}</p>
+                      <ul class="archive-links" data-pagefind-ignore>
+                        {projectLinks(project).map(({ label, url }) => (
+                          <li><a href={url} target={url.startsWith("http") ? "_blank" : undefined}>{label}</a></li>
+                        ))}
+                      </ul>
+                      <ul class="archive-tags">
+                        {project.data.tags.map((tag) => <li><a href={tagHref(tag)}>#{tag}</a></li>)}
+                      </ul>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))
+        }
+      </div>
+    </BottomLayout>
+  </div>
 </PageLayout>
