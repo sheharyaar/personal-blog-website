@@ -3,23 +3,38 @@ import { getCollection, render } from "astro:content"
 import PageLayout from "@layouts/PageLayout.astro"
 import TopLayout from "@layouts/TopLayout.astro"
 import BottomLayout from "@layouts/BottomLayout.astro"
+import Timeline from "@components/Timeline.astro"
 import { Content as AboutText } from "@content/about.md"
 import { ABOUT, SITE, SOCIALS } from "@consts"
-
-const entries = (await getCollection("work")).sort((a, b) => b.data.dateStart.getTime() - a.data.dateStart.getTime())
-
-const work = await Promise.all(
-  entries.map(async (entry) => {
-    const { Content } = await render(entry)
-    return { ...entry, Content }
-  }),
-)
 
 // dateEnd can be free text, e.g. "Present".
 function formatWorkDate(input: Date | string) {
   if (typeof input === "string") return input
   return input.toLocaleDateString("en-US", { month: "short", year: "numeric" })
 }
+
+const work = await Promise.all(
+  (await getCollection("work"))
+    .sort((a, b) => b.data.dateStart.getTime() - a.data.dateStart.getTime())
+    .map(async (entry) => ({
+      dates: `${formatWorkDate(entry.data.dateStart)} – ${formatWorkDate(entry.data.dateEnd)}`,
+      title: entry.data.company,
+      role: entry.data.role,
+      Content: (await render(entry)).Content,
+    })),
+)
+
+const openSource = await Promise.all(
+  (await getCollection("openSource"))
+    .filter((entry) => !entry.data.draft)
+    .sort((a, b) => a.data.order - b.data.order)
+    .map(async (entry) => ({
+      dates: entry.data.dates,
+      title: entry.data.title,
+      role: entry.data.role,
+      Content: (await render(entry)).Content,
+    })),
+)
 ---
 
 <PageLayout title={ABOUT.TITLE} description={ABOUT.DESCRIPTION}>
@@ -40,22 +55,12 @@ function formatWorkDate(input: Date | string) {
 
       <section id="work" class="animate about-section">
         <h2 class="section-title">Work</h2>
-        <ol class="timeline">
-          {
-            work.map((entry) => (
-              <li>
-                <p class="timeline-date">
-                  {formatWorkDate(entry.data.dateStart)} – {formatWorkDate(entry.data.dateEnd)}
-                </p>
-                <h3 class="timeline-company">{entry.data.company}</h3>
-                <p class="timeline-role">{entry.data.role}</p>
-                <article class="prose dark:prose-invert">
-                  <entry.Content />
-                </article>
-              </li>
-            ))
-          }
-        </ol>
+        <Timeline items={work} />
+      </section>
+
+      <section id="open-source" class="animate about-section">
+        <h2 class="section-title">Publications &amp; open source</h2>
+        <Timeline items={openSource} />
       </section>
 
       <section class="animate about-section" data-pagefind-ignore="all">

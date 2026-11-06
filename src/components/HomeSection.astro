@@ -2,8 +2,8 @@
 type Props = {
   eyebrow: string
   title: string
-  href: string
-  linkText: string
+  href?: string
+  linkText?: string
 }
 
 const { eyebrow, title, href, linkText } = Astro.props
@@ -16,11 +16,13 @@ const { eyebrow, title, href, linkText } = Astro.props
         <p class="eyebrow">{eyebrow}</p>
         <h2 class="section-title mt-2">{title}</h2>
       </div>
-      <a href={href} class="w-fit shrink-0 group flex gap-1 items-center underline decoration-[.5px] decoration-gold-soft/60 hover:decoration-gold text-black dark:text-white underline-offset-2 blend">
-        <span class="text-black/75 dark:text-white/75 group-hover:text-black group-hover:dark:text-white blend">
-          {linkText}
-        </span>
-      </a>
+      {href && (
+        <a href={href} class="w-fit shrink-0 group flex gap-1 items-center underline decoration-[.5px] decoration-gold-soft/60 hover:decoration-gold text-black dark:text-white underline-offset-2 blend">
+          <span class="text-black/75 dark:text-white/75 group-hover:text-black group-hover:dark:text-white blend">
+            {linkText}
+          </span>
+        </a>
+      )}
     </div>
     <slot />
   </div>

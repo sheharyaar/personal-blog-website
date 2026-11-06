@@ -72,8 +72,35 @@ const library = defineCollection({
     subject: z.string(),
     // Left empty in Obsidian, this comes through as null and nothing is shown.
     status: z.enum(["read", "reading", "unread"]).nullish(),
+    // Shows the book in "On the shelf" on the home page.
+    featured: z.boolean().nullish(),
     draft: z.boolean().optional(),
   }),
 })
 
-export const collections = { work, blog, projects, notes, library }
+// The short list of public work under the intro on the home page.
+// The text under the properties is the line shown below the title.
+const highlights = defineCollection({
+  loader: entries("highlights"),
+  schema: z.object({
+    title: z.string(),
+    when: z.string(),
+    url: z.string(),
+    order: z.number(),
+    draft: z.boolean().optional(),
+  }),
+})
+
+// Papers, talks and open source work, listed on About after the jobs.
+const openSource = defineCollection({
+  loader: entries("open-source"),
+  schema: z.object({
+    title: z.string(),
+    role: z.string().optional(),
+    dates: z.string(),
+    order: z.number(),
+    draft: z.boolean().optional(),
+  }),
+})
+
+export const collections = { work, blog, projects, notes, library, highlights, openSource }

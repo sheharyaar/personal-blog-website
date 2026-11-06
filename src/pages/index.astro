@@ -1,21 +1,22 @@
 ---
-import { getCollection } from "astro:content"
+import { getCollection, render } from "astro:content"
+import { Image } from "astro:assets"
 import PageLayout from "@layouts/PageLayout.astro"
 import Gotham from "@components/Gotham.astro"
 import HomeSection from "@components/HomeSection.astro"
 import Pinstripe from "@components/Pinstripe.astro"
 import { Content as Intro } from "@content/intro.md"
-import { getNotesTree, projectHref } from "@lib/content"
-import { formatDate, readingTime } from "@lib/utils"
+import { Content as StartHere } from "@content/start-here.md"
+import { getNotesTree, projectHref, tagSlug } from "@lib/content"
+import { covers } from "@lib/covers"
+import { formatDate } from "@lib/utils"
 import { SITE, SOCIALS } from "@consts"
-
-const allPosts = (await getCollection("blog"))
-  .filter((post) => !post.data.draft)
-  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
 
 // One entry per series (its newest post), so a long series doesn't push everything else off the page.
 const seenSeries = new Set<string>()
-const posts = allPosts
+const posts = (await getCollection("blog"))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
   .filter(({ data: { series } }) => {
     if (!series) return true
     if (seenSeries.has(series)) return false
@@ -23,10 +24,6 @@ const posts = allPosts
     return true
   })
   .slice(0, 5)
-  .map((post) => {
-    const parts = post.data.series ? allPosts.filter((other) => other.data.series === post.data.series) : []
-    return { post, parts: parts.length, firstPart: parts.at(-1) }
-  })
 
 const { notebooks } = await getNotesTree()
 
@@ -34,13 +31,25 @@ const projects = (await getCollection("projects"))
   .filter((project) => !project.data.draft)
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
   .slice(0, 3)
+
+const highlights = await Promise.all(
+  (await getCollection("highlights"))
+    .filter((highlight) => !highlight.data.draft)
+    .sort((a, b) => a.data.order - b.data.order)
+    .map(async (highlight) => ({ ...highlight.data, Content: (await render(highlight)).Content })),
+)
+
+const shelf = (await getCollection("library"))
+  .filter((book) => book.data.featured && !book.data.draft && covers.has(tagSlug(book.id)))
+  .sort((a, b) => a.data.title.localeCompare(b.data.title))
+  .slice(0, 5)
 ---
 
 <PageLayout title="Home" description={SITE.DESCRIPTION}>
 
   <!-- HERO -->
   <section class="relative h-screen w-full overflow-hidden">
-    <Gotham />
+    <Gotham interactive />
     <div class="relative z-10 h-full flex items-center justify-center px-5 pb-[18vh]">
       <div class="animate hero-ink text-center">
         <p class="eyebrow">
@@ -79,27 +88,39 @@ const projects = (await getCollection("projects"))
         <article>
           <Intro />
         </article>
+        <ul class="archive-list home-highlights">
+          {highlights.map(({ when, title, url, Content }) => (
+            <li>
+              <span class="archive-when">{when}</span>
+              <div>
+                <a href={url}>{title}</a>
+                <Content />
+              </div>
+            </li>
+          ))}
+        </ul>
         <p class="home-links"><a href="/about/">More about me →</a></p>
       </section>
 
       <Pinstripe class="animate" />
 
+      <HomeSection eyebrow="New here?" title="Start here">
+        <div class="start-here">
+          <StartHere />
+        </div>
+      </HomeSection>
+
+      <Pinstripe class="animate" />
+
       <HomeSection eyebrow="From the blog" title="Recent posts" href="/blog" linkText="All posts">
-        <ul class="home-posts">
-          {posts.map(({ post, parts, firstPart }) => (
+        <ul class="archive-list archive-list-full">
+          {posts.map((post) => (
             <li>
-              <p class="home-post-meta">
-                <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
-                <span>{readingTime(post.body ?? "")}</span>
-              </p>
-              <h3><a href={`/blog/${post.id}/`}>{post.data.title}</a></h3>
-              <p class="home-post-summary">{post.data.summary}</p>
-              <p class="home-links">
-                <a href={`/blog/${post.id}/`} aria-label={`Read more: ${post.data.title}`}>Read more →</a>
-                {parts > 1 && firstPart && (
-                  <a href={`/blog/${firstPart.id}/`}>Start the series: {post.data.series} ({parts} posts)</a>
-                )}
-              </p>
+              <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+              <div>
+                <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+                <p>{post.data.summary}</p>
+              </div>
             </li>
           ))}
         </ul>
@@ -131,6 +152,20 @@ const projects = (await getCollection("projects"))
                 <a href={projectHref(project)}>{project.data.title}</a>
                 <p>{project.data.summary}</p>
               </div>
+            </li>
+          ))}
+        </ul>
+      </HomeSection>
+
+      <Pinstripe class="animate" />
+
+      <HomeSection eyebrow="On the shelf" title="Standing on the shoulders of giants" href="/library" linkText="The library">
+        <ul class="home-shelf">
+          {shelf.map((book) => (
+            <li>
+              <a href={`/library/#${tagSlug(book.data.subject)}`} title={`${book.data.title} by ${book.data.author}`}>
+                <Image src={covers.get(tagSlug(book.id))!} alt={`${book.data.title} by ${book.data.author}`} widths={[120, 240]} sizes="(min-width: 640px) 110px, 18vw" />
+              </a>
             </li>
           ))}
         </ul>

@@ -10,10 +10,12 @@ import { cn } from "@lib/utils"
 type Props = {
   // An empty signal (no bat) for pages like the 404.
   empty?: boolean
+  // In dark mode: the windows and signal come on in turn, and the beam follows the cursor.
+  interactive?: boolean
   class?: string
 }
 
-const { empty = false, class: className } = Astro.props
+const { empty = false, interactive = false, class: className } = Astro.props
 ---
 
 <div class={cn("gotham", className)} aria-hidden="true">
@@ -69,3 +71,88 @@ const { empty = false, class: className } = Astro.props
 
   <div class="gotham-horizon"></div>
 </div>
+
+{interactive && (
+  <script is:inline>
+    // Inline so it runs before the first paint: the windows and signal have to be off before they show.
+    (() => {
+      if (matchMedia("(prefers-reduced-motion: reduce)").matches) return
+
+      const html = document.documentElement
+      const root = document.querySelector(".gotham")
+      const signal = root.querySelector(".gotham-signal")
+      const isDark = () => html.classList.contains("dark")
+
+      // Each windows path holds many small rectangles, which come back a few at a time in random order.
+      const windows = [...root.querySelectorAll(".gotham-windows path")].map((el) => ({
+        el,
+        rects: el.getAttribute("d").match(/M[^M]+/g).sort(() => Math.random() - 0.5),
+      }))
+      const showWindows = (share) =>
+        windows.forEach(({ el, rects }) => el.setAttribute("d", rects.slice(0, Math.round(share * rects.length)).join("")))
+
+      const STEPS = 20
+      const STEP_MS = 80
+      let timer
+
+      function lightUp(delay) {
+        clearTimeout(timer)
+        root.dataset.signal = "off"
+        showWindows(0)
+        let step = 0
+        const next = () => {
+          showWindows(++step / STEPS)
+          if (step < STEPS) timer = setTimeout(next, STEP_MS)
+          else root.dataset.signal = "on"
+        }
+        timer = setTimeout(next, delay)
+      }
+
+      let wasDark = isDark()
+      if (wasDark) lightUp(400)
+
+      // Switching to dark plays the overlay from theme.js first, so start as it fades.
+      new MutationObserver(() => {
+        if (isDark() && !wasDark) lightUp(700)
+        wasDark = isDark()
+      }).observe(html, { attributes: true, attributeFilter: ["class"] })
+
+      // The beam follows the cursor, staying above the name. Touch screens skip this.
+      if (!matchMedia("(hover: hover) and (pointer: fine)").matches) return
+
+      const styles = getComputedStyle(root)
+      const home = { x: parseFloat(styles.getPropertyValue("--sx")), y: parseFloat(styles.getPropertyValue("--sy")) }
+      const aim = { ...home }
+      const at = { ...home }
+      const clamp = (value, low, high) => Math.min(Math.max(value, low), high)
+      let frame = 0
+
+      function glide() {
+        at.x += (aim.x - at.x) * 0.12
+        at.y += (aim.y - at.y) * 0.12
+        root.style.setProperty("--sx", `${at.x}%`)
+        root.style.setProperty("--sy", `${at.y}%`)
+        frame = Math.abs(aim.x - at.x) + Math.abs(aim.y - at.y) > 0.05 ? requestAnimationFrame(glide) : 0
+      }
+
+      function moveTo(x, y) {
+        aim.x = x
+        aim.y = y
+        if (!frame) frame = requestAnimationFrame(glide)
+      }
+
+      addEventListener("pointermove", (event) => {
+        const box = root.getBoundingClientRect()
+        if (!isDark() || event.clientY > box.bottom) return
+        const width = (signal.offsetWidth / box.width) * 100
+        const height = (signal.offsetHeight / box.height) * 100
+        moveTo(
+          clamp(((event.clientX - box.left) / box.width) * 100 - width / 2, 2, 98 - width),
+          clamp(((event.clientY - box.top) / box.height) * 100 - height / 2, 3, 24),
+        )
+      }, { passive: true })
+
+      html.addEventListener("mouseleave", () => moveTo(home.x, home.y))
+    })()
+  </script>
+)}

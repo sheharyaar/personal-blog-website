@@ -14,8 +14,11 @@ This folder is not published. It's a cheat sheet for writing on the site from Ob
 | Project | `projects/<name>/index.md` | a row on `/projects/` |
 | Book | `library/<book-name>.md` | listed on `/library/` |
 | Job | `work/<name>.md` | timeline on `/about/` |
+| Paper, talk or open source work | `open-source/<name>.md` | after the jobs on `/about/` |
+| Home page highlight | `highlights/<name>.md` | under the intro on the home page |
 | About text | `about.md` | `/about/` |
 | Home page intro | `intro.md` | the home page |
+| Start here paths | `start-here.md` | the home page |
 
 New post: create the folder, create a note called `index` inside it, then run **Templates: Insert template → Blog post** from the command palette (Ctrl+P). The title, summary, date and tags appear as Properties at the top. Fill them in there.
 
@@ -29,6 +32,7 @@ Each book is one note in `library/`. To add a book, create a note there and inse
 - `subject`: the group the book appears under. A new value creates a new group and filter.
 - A short note: write it below the properties. It shows when someone clicks the cover, and a gold dot on the cover marks books that have one.
 - Cover: put an image in `library/covers/` with the same name as the note (`deep-work.jpg` for `deep-work.md`). About 400px wide is plenty. Without one, the book shows a plain tile with its title.
+- `featured`: turn this on to show the book in "On the shelf" on the home page. The first five with a cover are shown, in title order.
 - To hide a book, add `draft: true` or delete its note.
 
 Everything in these notes is public, so keep shelf locations and reading plans out of them.
@@ -39,6 +43,17 @@ A project is one row on `/projects/`, built from its properties. It has no page 
 
 - `summary`: the line under the title.
 - `blogUrl`, `notesUrl`, `demoUrl`, `repoUrl`: each one that's filled in shows as a link on the row. Use site paths for your own pages, like `/blog/my-post/`. The title goes to the first one set, in that order.
+
+## Start here
+
+Each path in `start-here.md` is a level 3 heading, one line of text and a bullet list of links. The numbers are added automatically.
+
+## Highlights and open source
+
+Both are one note per entry, and `order` sets the position, lowest first.
+
+- `highlights/`: `title`, `when` (plain text, like `2024–25`) and `url`, which the title links to. The line below the properties shows under the title.
+- `open-source/`: `title`, `dates` (plain text) and an optional `role`. The text below the properties shows on the entry.
 
 ## Callouts
 

@@ -490,6 +490,30 @@ html:has(:target) .animate {
   95% { opacity: 1; }
 }
 
+/* The home page hero lights up in order (script in Gotham.astro): windows first, then the signal. */
+.gotham[data-signal="off"] .gotham-beam-wrap,
+.gotham[data-signal="off"] .gotham-signal {
+  opacity: 0;
+  animation: none;
+}
+
+.gotham[data-signal="on"] .gotham-beam-wrap {
+  animation: signal-on 0.7s linear both;
+}
+
+.gotham[data-signal="on"] .gotham-signal {
+  animation: signal-on 0.7s linear both, signal-flicker 9s 0.7s infinite;
+}
+
+@keyframes signal-on {
+  0% { opacity: 0; }
+  20% { opacity: 0.25; }
+  35% { opacity: 0.05; }
+  55% { opacity: 0.6; }
+  75% { opacity: 0.2; }
+  100% { opacity: 1; }
+}
+
 /*
  * Bat-signal overlay played when switching to dark mode, or when someone
  * types "batman" (public/js/theme.js builds the markup).
@@ -675,11 +699,17 @@ html:not(.dark) .figure-dark,
   padding: 0.95rem 0;
   border-bottom: 1px dashed var(--rule);
 }
-.archive-list time { padding-top: 0.15rem; font-family: var(--font-mono); font-size: 0.8rem; color: var(--gold); white-space: nowrap; }
+.archive-list time,
+.archive-when { padding-top: 0.15rem; font-family: var(--font-mono); font-size: 0.8rem; color: var(--gold); white-space: nowrap; }
 .archive-list a { font-weight: 700; color: var(--fg); text-decoration: none; }
 .archive-list a:hover { text-decoration: underline; text-decoration-color: var(--gold-soft); text-underline-offset: 3px; }
 .archive-list p { margin-top: 0.15rem; font-size: 0.9rem; }
+.archive-list p a { font-weight: 400; text-decoration: underline; text-decoration-color: var(--gold-soft); text-underline-offset: 3px; }
 .archive-list h3 { scroll-margin-top: 5.5rem; }
+/* On phones the date column squeezes the wider date format, so it sits above the title. */
+@media (max-width: 640px) {
+  .archive-list-full > li { grid-template-columns: minmax(0, 1fr); gap: 0.2rem; }
+}
 .archive-tags,
 .archive-links { display: flex; flex-wrap: wrap; gap: 0.7rem; list-style: none; margin: 0.35rem 0 0; padding: 0; }
 .archive-tags a { font-weight: 400; font-size: 0.75rem; color: var(--fg-muted); }
@@ -689,18 +719,56 @@ html:not(.dark) .figure-dark,
 /* ------------------------------------------------------------------ */
 /* Home                                                               */
 /* ------------------------------------------------------------------ */
-.home-links { display: flex; flex-wrap: wrap; gap: 0.25rem 1.25rem; margin-top: 0.75rem; font-size: 0.875rem; }
-.home-links a { color: var(--fg); text-decoration: underline; text-decoration-color: var(--gold-soft); text-underline-offset: 3px; }
-.home-links a:hover { color: var(--gold); }
-.home-posts { list-style: none; margin: 0; padding: 0; }
-.home-posts > li { padding: 1.4rem 0; background: var(--dash-x) left bottom / var(--dash-gap) 1px repeat-x; }
-.home-posts > li:first-child { padding-top: 0.25rem; }
-.home-posts > li:last-child { padding-bottom: 0; background: none; }
-.home-post-meta { display: flex; flex-wrap: wrap; gap: 0.25rem 1.25rem; font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); }
-.home-posts h3 { margin-top: 0.4rem; font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; font-variant-numeric: lining-nums; line-height: 1.15; }
-.home-posts h3 a { color: var(--fg); text-decoration: none; }
-.home-posts h3 a:hover { text-decoration: underline; text-decoration-color: var(--gold-soft); text-underline-offset: 4px; }
-.home-post-summary { margin-top: 0.4rem; }
+.home-links,
+.start-here ul { display: flex; flex-wrap: wrap; gap: 0.25rem 1.25rem; margin-top: 0.75rem; font-size: 0.875rem; }
+.home-links a,
+.start-here ul a { color: var(--fg); text-decoration: underline; text-decoration-color: var(--gold-soft); text-underline-offset: 3px; }
+.home-links a:hover,
+.start-here ul a:hover { color: var(--gold); }
+
+/* start-here.md is flat: a heading, a line of text and a list of links for each path. */
+.start-here { --path-col: 3rem; counter-reset: path; }
+.start-here h3 {
+  position: relative;
+  padding-left: var(--path-col);
+  counter-increment: path;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-variant-numeric: lining-nums;
+  line-height: 1.15;
+  color: var(--fg);
+}
+.start-here h3:not(:first-child) { margin-top: 1.4rem; }
+.start-here h3::before {
+  content: counter(path, decimal-leading-zero);
+  position: absolute;
+  top: 0.45rem;
+  left: 0;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--gold);
+}
+.start-here p { margin-top: 0.4rem; padding-left: var(--path-col); }
+.start-here ul {
+  padding: 0 0 1.4rem var(--path-col);
+  list-style: none;
+  background: var(--dash-x) left bottom / var(--dash-gap) 1px repeat-x;
+}
+.start-here ul:last-child { padding-bottom: 0; background: none; }
+
+.home-highlights { margin-top: 1.5rem; border-top: 1px dashed var(--rule); }
+
+.home-shelf { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(0.5rem, 2vw, 1rem); list-style: none; margin: 0; padding: 0; }
+.home-shelf a { display: block; transition: transform 0.2s ease; }
+.home-shelf a:hover { transform: translateY(-3px); }
+.home-shelf img { display: block; width: 100%; aspect-ratio: 2 / 3; object-fit: cover; border-radius: 2px; box-shadow: 0 6px 16px rgb(0 0 0 / 0.28); }
+@media (prefers-reduced-motion: reduce) {
+  .home-shelf a { transition: none; }
+  .home-shelf a:hover { transform: none; }
+}
+
 .home-notebooks { list-style: none; margin: 0; padding: 0; }
 .home-notebooks a { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding: 0.75rem 0; background: var(--dash-x) left bottom / var(--dash-gap) 1px repeat-x; font-weight: 700; color: var(--fg); text-decoration: none; }
 .home-notebooks li:first-child a { padding-top: 0.25rem; }

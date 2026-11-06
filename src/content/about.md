@@ -1,6 +1,6 @@
-I am a final year undergraduate student at IIT Kharagpur, enrolled in Dual Degree B.Tech & M.Tech course in the department of Mining Engineering.
+I am a Software Engineer working on systems and networking at Neverinstall. Before that I was at Ola Electric, and I graduated from IIT Kharagpur in 2025 with a Dual Degree (B.Tech & M.Tech) in Mining Engineering.
 
-Though my major is Mining Engineering, my primary focus is on Computer Science and Engineering. I am a self-taught Software Engineer with past internship experiences in Software Engineering.
+Though my major was Mining Engineering, my primary focus is on Computer Science and Engineering. I am a self-taught Software Engineer.
 
 I aim to have in-depth understanding of the topics I study, and I prefer books and blogs over Youtube videos or tutorials. Currently, I am exploring the Linux Kernel, Networking in the Kernel, Database Systems and Distributed Systems. I use *Arch*, btw.
 

@@ -1,0 +1,29 @@
+---
+import { render } from "astro:content"
+
+type Props = {
+  items: {
+    dates: string
+    title: string
+    role?: string
+    Content: Awaited<ReturnType<typeof render>>["Content"]
+  }[]
+}
+
+const { items } = Astro.props
+---
+
+<ol class="timeline">
+  {
+    items.map(({ dates, title, role, Content }) => (
+      <li>
+        <p class="timeline-date">{dates}</p>
+        <h3 class="timeline-company">{title}</h3>
+        {role && <p class="timeline-role">{role}</p>}
+        <article class="prose dark:prose-invert">
+          <Content />
+        </article>
+      </li>
+    ))
+  }
+</ol>
