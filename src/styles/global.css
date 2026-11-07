@@ -760,7 +760,11 @@ html:not(.dark) .figure-dark,
 
 .home-highlights { margin-top: 1.5rem; border-top: 1px dashed var(--rule); }
 
-.home-shelf { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(0.5rem, 2vw, 1rem); list-style: none; margin: 0; padding: 0; }
+/* One row of up to eight on wider screens; phones wrap more than five into rows of four. */
+.home-shelf { display: grid; grid-template-columns: repeat(var(--shelf-cols, 5), minmax(0, 1fr)); gap: clamp(0.5rem, 2vw, 1rem); list-style: none; margin: 0; padding: 0; }
+@media (max-width: 640px) {
+  .home-shelf[data-wrap] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
 .home-shelf a { display: block; transition: transform 0.2s ease; }
 .home-shelf a:hover { transform: translateY(-3px); }
 .home-shelf img { display: block; width: 100%; aspect-ratio: 2 / 3; object-fit: cover; border-radius: 2px; box-shadow: 0 6px 16px rgb(0 0 0 / 0.28); }
@@ -851,6 +855,20 @@ html:has(.stacks, .toc-rail, .toc-panel) { scroll-behavior: smooth; }
 .book:hover .book-cover { transform: translateY(-3px); }
 .book-cover img { display: block; width: 100%; height: auto; border-radius: 2px; background: var(--rule); box-shadow: 0 1px 4px rgb(0 0 0 / 0.35); }
 .book-caption { display: block; padding: 0.55rem 0 1.25rem; }
+/* Books being read sit on a gold card that takes in the cover, title and author. Covers differ in
+   height, so the cover paints the top of the card and the caption the rest; on hover it all lifts. */
+.book[data-reading] { isolation: isolate; }
+.book[data-reading] .book-cover::before,
+.book[data-reading] .book-caption::before { content: ""; position: absolute; z-index: -1; inset-inline: -0.3rem; background: var(--gold-soft); pointer-events: none; }
+.book[data-reading] .book-cover::before { top: -0.3rem; bottom: 0; border-radius: 4px 4px 0 0; }
+.book[data-reading] .book-caption { position: relative; transition: transform 0.2s ease; }
+.book[data-reading] .book-caption::before { top: -1px; bottom: 0.85rem; border-radius: 0 0 4px 4px; }
+.book[data-reading]:hover .book-caption { transform: translateY(-3px); }
+.book[data-reading] .book-caption-title { color: #111; }
+.book[data-reading] .book-caption-author { color: rgb(17 17 17 / 0.85); }
+/* A book without a cover keeps its plain tile on the page colour. */
+.book[data-reading] .book-plain { background: var(--color-white); }
+.dark .book[data-reading] .book-plain { background: var(--color-black); }
 .book-caption-title,
 .book-caption-author { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; overflow-wrap: break-word; line-height: 1.25; }
 .book-caption-title { -webkit-line-clamp: 3; font-size: 0.8rem; font-weight: 700; color: var(--fg); }
@@ -867,7 +885,7 @@ html:has(.stacks, .toc-rail, .toc-panel) { scroll-behavior: smooth; }
     grid-auto-flow: column;
     grid-auto-columns: 6.75rem;
     margin-inline: -1.25rem;
-    padding: 0.25rem 1.25rem 0;
+    padding: 0.5rem 1.25rem 0;
     overflow-x: auto;
     scrollbar-width: none;
   }

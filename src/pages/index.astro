@@ -39,10 +39,11 @@ const highlights = await Promise.all(
     .map(async (highlight) => ({ ...highlight.data, Content: (await render(highlight)).Content })),
 )
 
+// What I'm reading now, grouped by subject as on the Library page. Eight fit on one row.
 const shelf = (await getCollection("library"))
-  .filter((book) => book.data.featured && !book.data.draft && covers.has(tagSlug(book.id)))
-  .sort((a, b) => a.data.title.localeCompare(b.data.title))
-  .slice(0, 5)
+  .filter((book) => book.data.status === "reading" && !book.data.draft && covers.has(tagSlug(book.id)))
+  .sort((a, b) => a.data.subject.localeCompare(b.data.subject) || a.data.title.localeCompare(b.data.title))
+  .slice(0, 8)
 ---
 
 <PageLayout title="Home" description={SITE.DESCRIPTION}>
@@ -159,19 +160,23 @@ const shelf = (await getCollection("library"))
 
       <Pinstripe class="animate" />
 
-      <HomeSection eyebrow="On the shelf" title="Standing on the shoulders of giants" href="/library" linkText="The library">
-        <ul class="home-shelf">
-          {shelf.map((book) => (
-            <li>
-              <a href={`/library/#${tagSlug(book.data.subject)}`} title={`${book.data.title} by ${book.data.author}`}>
-                <Image src={covers.get(tagSlug(book.id))!} alt={`${book.data.title} by ${book.data.author}`} widths={[120, 240]} sizes="(min-width: 640px) 110px, 18vw" />
-              </a>
-            </li>
-          ))}
-        </ul>
-      </HomeSection>
+      {shelf.length > 0 && (
+        <>
+          <HomeSection eyebrow="On the shelf" title="Standing on the shoulders of giants" href="/library" linkText="The library">
+            <ul class="home-shelf" style={`--shelf-cols: ${Math.max(shelf.length, 5)}`} data-wrap={shelf.length > 5 || undefined}>
+              {shelf.map((book) => (
+                <li>
+                  <a href={`/library/#${tagSlug(book.data.subject)}`} title={`${book.data.title} by ${book.data.author} (reading)`}>
+                    <Image src={covers.get(tagSlug(book.id))!} alt={`${book.data.title} by ${book.data.author}, currently reading`} widths={[120, 240]} sizes="(min-width: 640px) 110px, 22vw" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </HomeSection>
 
-      <Pinstripe class="animate" />
+          <Pinstripe class="animate" />
+        </>
+      )}
 
       <!-- Contact Section -->
       <section class="animate">

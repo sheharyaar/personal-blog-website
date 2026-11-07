@@ -82,7 +82,7 @@ const coverSizes = "(min-width: 640px) 110px, 30vw"
                 <ul class="book-grid">
                   {items.map((book) => (
                     <li>
-                      <button type="button" class="book" popovertarget={`book-${book.id}`} title={`${book.title} by ${book.author}`}>
+                      <button type="button" class="book" data-reading={book.status === "reading" || undefined} popovertarget={`book-${book.id}`} title={`${book.title} by ${book.author}`}>
                         <span class="book-cover">
                           {book.cover ? (
                             <Image src={book.cover} alt="" widths={coverWidths} sizes={coverSizes} />

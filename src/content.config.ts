@@ -72,8 +72,6 @@ const library = defineCollection({
     subject: z.string(),
     // Left empty in Obsidian, this comes through as null and nothing is shown.
     status: z.enum(["read", "reading", "unread"]).nullish(),
-    // Shows the book in "On the shelf" on the home page.
-    featured: z.boolean().nullish(),
     draft: z.boolean().optional(),
   }),
 })
