@@ -39,7 +39,7 @@ Every book on `/library/` is one note in `src/content/library/`. The home page's
    ```
 
    - `subject` is the group the book is listed under. A new value creates a new group.
-   - `status` is `read`, `reading`, `unread` or empty. Only `reading` shows on the site; the others are for your own tracking. Anything else stops the build, so typos get caught.
+   - `status` is `reading` while you're reading the book, otherwise empty. Anything else stops the build, so typos get caught.
 3. Add the cover as `src/content/library/covers/deep-work.jpg`, with the same name as the note. About 400px wide is plenty. Open Library (`https://covers.openlibrary.org/b/isbn/<ISBN>-L.jpg`) or the book's Amazon page are good sources. Without a cover, the book shows as a plain tile.
 4. Optionally, write a short note below the properties. It shows when someone clicks the cover.
 
@@ -47,8 +47,8 @@ Everything in these notes is public, so keep shelf locations and reading plans o
 
 ### Currently reading
 
-- **Start a book:** set `status: reading`. The book gets a gold card on `/library/` and appears in "On the shelf" on the home page.
-- **Finish a book:** set `status: read`, or empty the field if you stopped. It leaves the home page and loses the gold card.
+- **Start a book:** set `status: reading`. The book gets a gold card and a "reading" label on `/library/`, and appears in "On the shelf" on the home page.
+- **Finish or drop a book:** empty `status`. The gold card, the label and its place on the home page go away.
 
 "On the shelf" shows up to eight books that have a cover, grouped by subject. If no book is set to `reading`, the section is hidden.
 

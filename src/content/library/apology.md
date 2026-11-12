@@ -2,5 +2,5 @@
 title: "Apology"
 author: "Plato"
 subject: "Philosophy & Stoicism"
-status: read
+status:
 ---

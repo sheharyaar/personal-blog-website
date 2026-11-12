@@ -71,7 +71,7 @@ const library = defineCollection({
     author: z.string(),
     subject: z.string(),
     // Left empty in Obsidian, this comes through as null and nothing is shown.
-    status: z.enum(["read", "reading", "unread"]).nullish(),
+    status: z.enum(["reading"]).nullish(),
     draft: z.boolean().optional(),
   }),
 })

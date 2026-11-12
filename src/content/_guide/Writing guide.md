@@ -28,7 +28,7 @@ Files and folders starting with `_` are never published.
 
 Each book is one note in `library/`. To add a book, create a note there and insert the **Book** template.
 
-- `status`: `read`, `reading` or `unread`, in lowercase, or empty. Only `reading` shows on the site; `read` and `unread` are for your own tracking. Anything else stops the build, so typos get caught. Books set to `reading` sit on a gold card on the Library page and appear in "On the shelf" on the home page (up to eight, with a cover, grouped by subject). With none set to `reading`, that section is hidden.
+- `status`: `reading` while you're reading the book, otherwise empty. Anything else stops the build, so typos get caught. Books set to `reading` sit on a gold card on the Library page and appear in "On the shelf" on the home page (up to eight, with a cover, grouped by subject). With none set to `reading`, that section is hidden.
 - `subject`: the group the book appears under. A new value creates a new group and filter.
 - A short note: write it below the properties. It shows when someone clicks the cover, and a gold dot on the cover marks books that have one.
 - Cover: put an image in `library/covers/` with the same name as the note (`deep-work.jpg` for `deep-work.md`). About 400px wide is plenty. Without one, the book shows a plain tile with its title.
