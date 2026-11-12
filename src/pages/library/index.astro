@@ -92,7 +92,7 @@ const coverSizes = "(min-width: 640px) 110px, 30vw"
                               <span class="book-plain-author">{book.author}</span>
                             </span>
                           )}
-                          {book.status && book.status !== "unread" && <span class="book-badge">{book.status}</span>}
+                          {book.status === "reading" && <span class="book-badge">reading</span>}
                           {book.Note && <span class="book-note-dot"><span class="sr-only">Has a note</span></span>}
                         </span>
                         <span class="book-caption">
@@ -106,7 +106,7 @@ const coverSizes = "(min-width: 640px) 110px, 30vw"
                         <div class="book-card-body">
                           <h3>{book.title}</h3>
                           <p class="book-card-author">{book.author}</p>
-                          <p class="book-card-meta">{book.subject}{book.status && ` · ${book.status}`}</p>
+                          <p class="book-card-meta">{book.subject}{book.status === "reading" && " · reading"}</p>
                           {book.Note && (
                             <article class="book-card-note prose dark:prose-invert">
                               <book.Note />
