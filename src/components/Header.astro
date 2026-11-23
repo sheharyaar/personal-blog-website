@@ -4,7 +4,7 @@ import { cn } from "@lib/utils"
 const { pathname } = Astro.url
 const subpath = pathname.match(/[^/]+/g)
 import Container from "@components/Container.astro"
-import { BAT_PATH, BAT_VIEWBOX } from "@lib/bat"
+import { BAT_PATH } from "@lib/bat"
 ---
 
 <header id="header" class="fixed top-0 w-full h-16 z-50 ">
@@ -12,9 +12,7 @@ import { BAT_PATH, BAT_VIEWBOX } from "@lib/bat"
     <div class="relative h-full w-full">
       <div class="absolute left-0 top-1/2 -translate-y-1/2 flex gap-1 font-semibold">
         <a href="/" class="group flex items-center gap-2 text-black dark:text-white">
-          <svg class="h-3.5 w-auto fill-gold transition-transform duration-300 ease-in-out group-hover:-translate-y-0.5" viewBox={BAT_VIEWBOX} aria-hidden="true">
-            <path d={BAT_PATH} />
-          </svg>
+          <img src="/img/portrait.jpg" alt="" width="28" height="28" class="size-7 rounded-full object-cover ring-1 ring-gold-soft transition-transform duration-300 ease-in-out group-hover:-translate-y-0.5" />
           <span class="font-display text-xl font-bold tracking-wide">
             {SITE.TITLE}
           </span>
